@@ -1,0 +1,3623 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="screen-orientation" content="landscape">
+    <meta name="x5-orientation" content="landscape">
+    <meta name="x5-fullscreen" content="true">
+    <meta name="full-screen" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1565c0">
+    <meta name="msapplication-TileColor" content="#1565c0">
+    <meta name="msapplication-navbutton-color" content="#1565c0">
+    <meta name="application-name" content="مفتش السلامة">
+    <meta name="apple-mobile-web-app-title" content="مفتش السلامة">
+    <meta name="description" content="لعبة تقييم المخاطر داخل محطات مياه الشرب - تدريب تفاعلي على السلامة والصحة المهنية">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- أيقونات التطبيق -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231565c0'/><text x='50' y='65' font-size='55' text-anchor='middle'>🏭</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='30' fill='%231565c0'/><text x='90' y='115' font-size='90' text-anchor='middle'>🏭</text></svg>">
+    
+    <title>مفتش السلامة داخل محطة مياه الشرب</title>
+    <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    direction: rtl;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+
+.screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    z-index: 1;
+}
+.screen.active { display: block; }
+
+/* شاشة البداية */
+.start-overlay {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #0c1a2e 0%, #1a3a5c 30%, #0d2137 60%, #0a1628 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+.start-overlay::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(52,152,219,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(46,204,113,0.08) 0%, transparent 50%);
+    animation: bgMove 20s linear infinite;
+}
+@keyframes bgMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-10%, -10%); }
+}
+.start-content {
+    text-align: center;
+    padding: 30px;
+    max-width: 800px;
+    position: relative;
+    z-index: 2;
+    animation: fadeInUp 1s ease;
+}
+.start-logo {
+    font-size: 80px;
+    margin-bottom: 10px;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 10px 30px rgba(0,150,255,0.4));
+}
+.start-content h1 {
+    font-size: 2.2em;
+    background: linear-gradient(to left, #4fc3f7, #fff, #ffd54f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+.start-content h2 {
+    font-size: 1.1em;
+    color: #90caf9;
+    font-weight: normal;
+    margin-bottom: 15px;
+}
+.start-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #1565c0, #0d47a1);
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-size: 0.9em;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.start-desc {
+    color: #b0bec5;
+    font-size: 0.95em;
+    line-height: 1.9;
+    margin-bottom: 20px;
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.start-sections {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.section-tag {
+    background: rgba(255,255,255,0.08);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75em;
+    color: #90caf9;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.start-controls {
+    background: rgba(0,0,0,0.4);
+    padding: 15px 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    font-size: 0.85em;
+    color: #78909c;
+    line-height: 2;
+}
+.btn-primary {
+    background: linear-gradient(135deg, #1565c0, #1976d2, #42a5f5);
+    color: white;
+    border: none;
+    padding: 16px 50px;
+    font-size: 1.15em;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s;
+    box-shadow: 0 6px 20px rgba(21,101,192,0.5);
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(21,101,192,0.6); }
+.btn-primary:active { transform: translateY(0); }
+.btn-secondary {
+    background: rgba(255,255,255,0.1);
+    color: #b0bec5;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 14px 35px;
+    font-size: 1em;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s;
+    margin-top: 12px;
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.btn-danger {
+    background: linear-gradient(135deg, #c62828, #e53935);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1em;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 10px;
+}
+.btn-large { padding: 18px 55px; font-size: 1.2em; }
+.pulse-btn { animation: pulse 2s ease-in-out infinite; }
+
+.btn-about {
+    background: transparent;
+    color: #78909c;
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 10px 25px;
+    font-size: 0.9em;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s;
+    margin-top: 15px;
+}
+.btn-about:hover { 
+    background: rgba(255,255,255,0.08); 
+    color: #b0bec5;
+    border-color: rgba(255,255,255,0.25);
+}
+
+.btn-install {
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    font-size: 0.95em;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s;
+    margin-top: 12px;
+    box-shadow: 0 4px 15px rgba(76,175,80,0.4);
+    animation: pulse-green 2s ease-in-out infinite;
+}
+.btn-install:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76,175,80,0.5);
+}
+@keyframes pulse-green {
+    0%, 100% { box-shadow: 0 4px 15px rgba(76,175,80,0.4); }
+    50% { box-shadow: 0 4px 25px rgba(76,175,80,0.7); }
+}
+
+/* شريط المعلومات */
+#topBar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 55px;
+    background: linear-gradient(180deg, rgba(10,15,25,0.98), rgba(10,15,25,0.92));
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    z-index: 20;
+    border-bottom: 2px solid rgba(33,150,243,0.3);
+}
+.bar-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+}
+.bar-label { color: #90a4ae; white-space: nowrap; }
+.bar-track {
+    width: 80px;
+    height: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.5s ease;
+}
+.bar-fill.health { width: 100%; background: linear-gradient(to left, #4caf50, #8bc34a); }
+.bar-fill.safety { width: 0%; background: linear-gradient(to left, #2196f3, #03a9f4); }
+.bar-val { color: #e0e0e0; font-weight: bold; min-width: 40px; }
+.time-val { color: #ffd54f; font-size: 1.1em; }
+.score-val { color: #69f0ae; font-size: 1.1em; }
+
+.btn-icon {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    font-size: 1.2em;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.btn-icon:hover { background: rgba(255,255,255,0.2); }
+
+#btnMatrix {
+    background: linear-gradient(135deg, rgba(156,39,176,0.3), rgba(103,58,183,0.3));
+    border-color: rgba(156,39,176,0.5);
+    font-size: 0.7em;
+    width: auto;
+    padding: 0 12px;
+    gap: 5px;
+}
+
+#gameCanvas {
+    position: absolute;
+    top: 55px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 55px);
+}
+
+#sectionIndicator {
+    position: absolute;
+    top: 62px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, rgba(21,101,192,0.95), rgba(13,71,161,0.95));
+    padding: 10px 30px;
+    border-radius: 0 0 18px 18px;
+    font-size: 0.95em;
+    color: #fff;
+    z-index: 15;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-top: none;
+    font-weight: bold;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+}
+
+#interactHint {
+    position: absolute;
+    bottom: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 14px;
+    font-size: 1em;
+    font-weight: bold;
+    z-index: 15;
+    animation: bounce 1s ease infinite;
+    box-shadow: 0 5px 20px rgba(255,152,0,0.5);
+}
+#interactHint kbd {
+    background: rgba(0,0,0,0.3);
+    padding: 4px 12px;
+    border-radius: 6px;
+    margin: 0 5px;
+}
+
+#minimap {
+    position: absolute;
+    top: 65px;
+    right: 12px;
+    border: 2px solid rgba(33,150,243,0.6);
+    border-radius: 14px;
+    background: rgba(10,15,25,0.92);
+    z-index: 15;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+}
+
+/* مؤشر الصوت */
+#soundIndicator {
+    position: absolute;
+    top: 65px;
+    left: 12px;
+    background: rgba(10,15,25,0.85);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.75em;
+    color: #90caf9;
+    z-index: 15;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+#soundIndicator .sound-icon {
+    font-size: 1.2em;
+    margin-left: 5px;
+}
+
+/* Joystick للموبايل */
+#mobileControls {
+    position: absolute;
+    bottom: 25px;
+    left: 0; right: 0;
+    display: none;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 25px;
+    z-index: 20;
+    pointer-events: none;
+}
+
+#joystickContainer {
+    width: 140px;
+    height: 140px;
+    background: rgba(255,255,255,0.08);
+    border: 3px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    position: relative;
+    pointer-events: auto;
+    touch-action: none;
+}
+#joystickKnob {
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+    border: 2px solid rgba(255,255,255,0.4);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: none;
+}
+
+.btn-action {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    border: 4px solid rgba(255,255,255,0.4);
+    color: white;
+    font-size: 0.95em;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 5px 25px rgba(255,152,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+}
+.btn-action:active { transform: scale(0.92); }
+.btn-action .action-icon { font-size: 1.5em; }
+
+/* النوافذ */
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s ease;
+}
+.modal.hidden { display: none; }
+.modal-content {
+    background: linear-gradient(180deg, #1e2d3d, #1a2332);
+    border-radius: 20px;
+    width: 94%;
+    max-width: 580px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 30px 100px rgba(0,0,0,0.7);
+    animation: slideUp 0.3s ease;
+}
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 25px;
+    border-radius: 20px 20px 0 0;
+    font-size: 1.1em;
+}
+.modal-header span { font-size: 1.7em; }
+.modal-header.danger { background: linear-gradient(135deg, #b71c1c, #c62828); }
+.modal-header.warning { background: linear-gradient(135deg, #e65100, #ef6c00); }
+.modal-header.info { background: linear-gradient(135deg, #0d47a1, #1565c0); }
+.modal-header.success { background: linear-gradient(135deg, #1b5e20, #2e7d32); }
+.modal-header.purple { background: linear-gradient(135deg, #4a148c, #6a1b9a); }
+.modal-body { padding: 25px; }
+
+.hazard-desc {
+    font-size: 1em;
+    line-height: 1.9;
+    color: #cfd8dc;
+    margin-bottom: 20px;
+    background: rgba(0,0,0,0.25);
+    padding: 18px;
+    border-radius: 14px;
+    border-right: 5px solid #ff9800;
+}
+.hazard-icon-large {
+    font-size: 4.5em;
+    text-align: center;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.4));
+}
+
+/* مصفوفة المخاطر */
+.risk-matrix-section {
+    background: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+.risk-matrix-section h4 {
+    color: #ce93d8;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.1em;
+}
+.matrix-grid {
+    display: grid;
+    grid-template-columns: auto repeat(5, 1fr);
+    gap: 3px;
+    font-size: 0.7em;
+    margin-bottom: 15px;
+}
+.matrix-cell {
+    padding: 8px 4px;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: bold;
+}
+.matrix-cell.header {
+    background: rgba(255,255,255,0.1);
+    color: #90caf9;
+    cursor: default;
+    font-size: 0.85em;
+}
+.matrix-cell.row-header {
+    background: rgba(255,255,255,0.1);
+    color: #90caf9;
+    cursor: default;
+    writing-mode: horizontal-tb;
+    font-size: 0.8em;
+}
+.matrix-cell.low { background: rgba(76,175,80,0.4); color: #a5d6a7; }
+.matrix-cell.medium { background: rgba(255,235,59,0.4); color: #fff176; }
+.matrix-cell.high { background: rgba(255,152,0,0.4); color: #ffcc80; }
+.matrix-cell.extreme { background: rgba(244,67,54,0.4); color: #ef9a9a; }
+.matrix-cell:hover:not(.header):not(.row-header) { transform: scale(1.1); z-index: 1; }
+.matrix-cell.selected { 
+    outline: 3px solid #fff; 
+    outline-offset: -2px;
+    transform: scale(1.1);
+    z-index: 2;
+}
+
+.matrix-result {
+    text-align: center;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+.matrix-result.low { background: rgba(76,175,80,0.3); color: #81c784; border: 2px solid rgba(76,175,80,0.5); }
+.matrix-result.medium { background: rgba(255,235,59,0.3); color: #fff176; border: 2px solid rgba(255,235,59,0.5); }
+.matrix-result.high { background: rgba(255,152,0,0.3); color: #ffcc80; border: 2px solid rgba(255,152,0,0.5); }
+.matrix-result.extreme { background: rgba(244,67,54,0.3); color: #ef9a9a; border: 2px solid rgba(244,67,54,0.5); }
+
+.matrix-legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+    font-size: 0.8em;
+    flex-wrap: wrap;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+}
+.legend-dot.low { background: #4caf50; }
+.legend-dot.medium { background: #ffeb3b; }
+.legend-dot.high { background: #ff9800; }
+.legend-dot.extreme { background: #f44336; }
+
+/* PPE Grid */
+.ppe-section {
+    background: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+.ppe-section h4 {
+    color: #90caf9;
+    margin-bottom: 15px;
+    text-align: center;
+}
+.ppe-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+.ppe-item {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 10px 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.65em;
+    color: #b0bec5;
+}
+.ppe-item:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); }
+.ppe-item.selected {
+    border-color: #42a5f5;
+    background: rgba(66,165,245,0.25);
+    color: #fff;
+}
+.ppe-item .ppe-icon { font-size: 2em; display: block; margin-bottom: 4px; }
+.ppe-item.correct { border-color: #4caf50; background: rgba(76,175,80,0.3); }
+.ppe-item.wrong { border-color: #f44336; background: rgba(244,67,54,0.3); }
+.ppe-item.missed { border-color: #ff9800; background: rgba(255,152,0,0.3); }
+
+
+/* الإجراءات التصحيحية */
+.corrective-section {
+    background: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+.corrective-section h4 {
+    color: #90caf9;
+    margin-bottom: 15px;
+    text-align: center;
+}
+.corrective-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.corrective-btn {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9em;
+    color: #cfd8dc;
+    text-align: right;
+    transition: all 0.2s;
+}
+.corrective-btn:hover { border-color: #42a5f5; background: rgba(66,165,245,0.1); }
+.corrective-btn.selected { border-color: #42a5f5; background: rgba(66,165,245,0.25); color: #fff; }
+.corrective-btn.correct { border-color: #4caf50; background: rgba(76,175,80,0.3); color: #81c784; }
+.corrective-btn.wrong { border-color: #f44336; background: rgba(244,67,54,0.3); color: #ef9a9a; }
+
+/* النتيجة */
+.result-feedback {
+    padding: 18px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+    line-height: 1.8;
+}
+.result-feedback.success {
+    background: rgba(76,175,80,0.2);
+    border: 2px solid rgba(76,175,80,0.4);
+    color: #81c784;
+}
+.result-feedback.partial {
+    background: rgba(255,193,7,0.2);
+    border: 2px solid rgba(255,193,7,0.4);
+    color: #ffd54f;
+}
+.result-feedback.fail {
+    background: rgba(244,67,54,0.2);
+    border: 2px solid rgba(244,67,54,0.4);
+    color: #ef9a9a;
+}
+.result-score {
+    font-size: 2.2em;
+    font-weight: bold;
+    display: block;
+    margin-top: 12px;
+}
+
+/* التعليم */
+.edu-box {
+    background: rgba(33,150,243,0.12);
+    border: 1px solid rgba(33,150,243,0.35);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 20px;
+}
+.edu-box h5 {
+    color: #64b5f6;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05em;
+}
+.edu-box p {
+    color: #b0bec5;
+    font-size: 0.9em;
+    line-height: 1.8;
+    margin-bottom: 8px;
+}
+
+/* Pause */
+.pause-modal { text-align: center; padding: 35px; }
+.pause-modal h3 { margin-bottom: 25px; font-size: 1.5em; }
+.pause-stats {
+    background: rgba(0,0,0,0.35);
+    padding: 25px;
+    border-radius: 18px;
+    margin-bottom: 25px;
+}
+.pause-stats p { margin: 10px 0; color: #b0bec5; font-size: 1.05em; }
+.pause-stats span { color: #ffd54f; font-weight: bold; font-size: 1.15em; }
+.pause-modal button { display: block; width: 100%; margin-top: 12px; }
+
+/* شاشة النهاية */
+.win-overlay {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #0d2818 0%, #1a3a2c 50%, #0d2818 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+}
+.win-content {
+    text-align: center;
+    padding: 45px 35px;
+    max-width: 680px;
+    animation: fadeInUp 1s ease;
+}
+.win-trophy {
+    font-size: 100px;
+    animation: float 2s ease-in-out infinite;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 15px 40px rgba(255,215,0,0.5));
+}
+.win-content h1 {
+    font-size: 2em;
+    background: linear-gradient(to left, #ffd54f, #fff, #69f0ae);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 15px;
+}
+.win-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin: 30px 0;
+}
+.win-stat {
+    background: rgba(255,255,255,0.08);
+    padding: 22px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+.ws-icon { font-size: 2em; display: block; margin-bottom: 10px; }
+.ws-label { display: block; font-size: 0.85em; color: #78909c; margin-bottom: 6px; }
+.ws-val { font-size: 1.6em; font-weight: bold; color: #ffd54f; }
+
+.grade-badge {
+    display: inline-block;
+    padding: 18px 50px;
+    border-radius: 18px;
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+.grade-badge.excellent { background: linear-gradient(135deg, #4caf50, #2e7d32); }
+.grade-badge.good { background: linear-gradient(135deg, #2196f3, #1565c0); }
+.grade-badge.average { background: linear-gradient(135deg, #ff9800, #ef6c00); }
+.grade-badge.needs-work { background: linear-gradient(135deg, #f44336, #c62828); }
+
+.hidden { display: none !important; }
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10,15,25,0.96);
+    border: 2px solid rgba(255,255,255,0.2);
+    padding: 14px 32px;
+    border-radius: 14px;
+    font-size: 1em;
+    z-index: 200;
+    animation: fadeInUp 0.3s ease;
+    max-width: 90%;
+    text-align: center;
+}
+.toast.success { border-color: rgba(76,175,80,0.7); color: #81c784; }
+.toast.warning { border-color: rgba(255,193,7,0.7); color: #ffd54f; }
+.toast.danger { border-color: rgba(244,67,54,0.7); color: #ef9a9a; }
+.toast.info { border-color: rgba(33,150,243,0.7); color: #64b5f6; }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(35px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(60px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { box-shadow: 0 6px 20px rgba(21,101,192,0.5); } 50% { box-shadow: 0 6px 40px rgba(21,101,192,0.8); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+@keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-10px); } }
+
+/* شاشة تدوير الجهاز */
+#rotateScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0c1a2e 0%, #1a3a5c 50%, #0a1628 100%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    text-align: center;
+    padding: 30px;
+}
+#rotateScreen .rotate-icon {
+    font-size: 80px;
+    animation: rotatePhone 2s ease-in-out infinite;
+    margin-bottom: 25px;
+}
+#rotateScreen h2 {
+    font-size: 1.5em;
+    color: #fff;
+    margin-bottom: 15px;
+}
+#rotateScreen p {
+    color: #90caf9;
+    font-size: 1em;
+    line-height: 1.8;
+}
+@keyframes rotatePhone {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-20deg); }
+    75% { transform: rotate(20deg); }
+}
+
+/* إخفاء شاشة التدوير في الوضع الأفقي */
+@media screen and (orientation: landscape) {
+    #rotateScreen {
+        display: none !important;
+    }
+}
+
+/* إظهار شاشة التدوير في الوضع العمودي على الموبايل */
+@media screen and (orientation: portrait) and (max-width: 900px) {
+    #rotateScreen {
+        display: flex !important;
+    }
+    #startScreen,
+    #gameScreen,
+    #winScreen {
+        display: none !important;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .start-content h1 { font-size: 1.5em; }
+    .start-logo { font-size: 55px; }
+    .section-tag { font-size: 0.65em; padding: 4px 8px; }
+    #topBar { height: 50px; padding: 0 10px; }
+    .bar-label { display: none; }
+    .bar-track { width: 50px; height: 8px; }
+    #btnMatrix { font-size: 0.6em; padding: 0 8px; }
+    #gameCanvas { top: 50px; height: calc(100% - 50px); }
+    #sectionIndicator { top: 54px; font-size: 0.8em; padding: 8px 20px; }
+    #minimap { width: 120px; height: 90px; top: 54px; }
+    #soundIndicator { top: 54px; font-size: 0.65em; padding: 6px 10px; }
+    #mobileControls { display: flex; }
+    .ppe-grid { grid-template-columns: repeat(4, 1fr); gap: 5px; }
+    .ppe-item { padding: 8px 3px; font-size: 0.6em; }
+    .ppe-item .ppe-icon { font-size: 1.7em; }
+    .matrix-grid { font-size: 0.6em; }
+}
+
+/* تحسينات الوضع الأفقي على الموبايل */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+    .start-content { padding: 15px; }
+    .start-logo { font-size: 40px; margin-bottom: 5px; }
+    .start-content h1 { font-size: 1.2em; margin-bottom: 3px; }
+    .start-content h2 { font-size: 0.85em; margin-bottom: 8px; }
+    .start-badge { padding: 5px 15px; font-size: 0.75em; margin-bottom: 10px; }
+    .start-desc { font-size: 0.8em; line-height: 1.5; margin-bottom: 10px; display: none; }
+    .start-sections { gap: 5px; margin-bottom: 10px; }
+    .section-tag { padding: 3px 8px; font-size: 0.6em; }
+    .start-controls { padding: 8px 15px; font-size: 0.7em; line-height: 1.5; margin-bottom: 12px; }
+    .btn-primary.btn-large { padding: 12px 35px; font-size: 1em; }
+    .btn-secondary.btn-large { padding: 8px 25px; font-size: 0.85em; margin-top: 6px; }
+    .btn-about { padding: 6px 18px; font-size: 0.75em; margin-top: 8px; }
+    
+    #topBar { height: 40px; }
+    .bar-item { font-size: 0.75em; }
+    .bar-track { width: 45px; height: 6px; }
+    .bar-val { font-size: 0.8em; min-width: 30px; }
+    #btnMatrix { font-size: 0.55em; padding: 0 6px; height: 32px; }
+    .btn-icon { width: 32px; height: 32px; font-size: 1em; }
+    
+    #gameCanvas { top: 40px; height: calc(100% - 40px); }
+    #sectionIndicator { top: 44px; font-size: 0.7em; padding: 5px 15px; }
+    #minimap { width: 100px; height: 75px; top: 44px; right: 8px; }
+    #soundIndicator { top: 44px; left: 8px; font-size: 0.6em; padding: 4px 8px; }
+    #interactHint { bottom: 100px; font-size: 0.85em; padding: 8px 20px; }
+    
+    #mobileControls { bottom: 10px; padding: 0 15px; }
+    #joystickContainer { width: 100px; height: 100px; }
+    #joystickKnob { width: 40px; height: 40px; }
+    .btn-action { width: 70px; height: 70px; font-size: 0.75em; }
+    .btn-action .action-icon { font-size: 1.3em; }
+    
+    .modal-content { max-height: 95vh; }
+    .modal-header { padding: 12px 18px; font-size: 0.95em; }
+    .modal-header span { font-size: 1.3em; }
+    .modal-body { padding: 15px; }
+    .hazard-icon-large { font-size: 3em; margin-bottom: 10px; }
+    .hazard-desc { font-size: 0.85em; padding: 12px; margin-bottom: 15px; }
+    .risk-matrix-section, .ppe-section, .corrective-section { padding: 12px; margin-bottom: 12px; }
+    .risk-matrix-section h4, .ppe-section h4, .corrective-section h4 { font-size: 0.9em; margin-bottom: 10px; }
+    .matrix-grid { font-size: 0.55em; gap: 2px; }
+    .matrix-cell { padding: 5px 2px; }
+    .ppe-grid { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+    .ppe-item { padding: 6px 2px; font-size: 0.55em; }
+    .ppe-item .ppe-icon { font-size: 1.4em; }
+    .corrective-btn { padding: 10px 12px; font-size: 0.8em; }
+    
+    .win-content { padding: 20px 15px; }
+    .win-trophy { font-size: 50px; margin-bottom: 8px; }
+    .win-content h1 { font-size: 1.2em; margin-bottom: 8px; }
+    .grade-badge { padding: 10px 30px; font-size: 1em; margin-bottom: 15px; }
+    .win-stats { gap: 10px; margin: 15px 0; }
+    .win-stat { padding: 12px 10px; }
+    .ws-icon { font-size: 1.3em; margin-bottom: 5px; }
+    .ws-label { font-size: 0.7em; }
+    .ws-val { font-size: 1.2em; }
+    
+    /* About Modal في الوضع الأفقي */
+    .about-modal { max-height: 90vh; }
+    .about-logo { font-size: 40px; margin-bottom: 5px; }
+    .about-title { font-size: 1em; margin-bottom: 15px; }
+    .about-section { padding: 10px; margin-bottom: 8px; }
+    .about-icon { font-size: 1.2em; min-width: 28px; }
+    .about-item div { font-size: 0.8em; line-height: 1.5; }
+    .goals-list li { margin-bottom: 4px; }
+    .about-copyright { padding: 12px; margin-top: 12px; }
+    .copyright-logo { font-size: 2em; }
+}
+
+.modal-content::-webkit-scrollbar { width: 6px; }
+.modal-content::-webkit-scrollbar-track { background: transparent; }
+.modal-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+/* نافذة حول التطبيق */
+.about-modal {
+    max-width: 520px;
+}
+.about-header {
+    background: linear-gradient(135deg, #1565c0, #0d47a1);
+}
+.about-body {
+    text-align: center;
+}
+.about-logo {
+    font-size: 60px;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 5px 15px rgba(0,100,200,0.3));
+}
+.about-title {
+    font-size: 1.3em;
+    color: #90caf9;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+.about-section {
+    background: rgba(0,0,0,0.25);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 12px;
+    text-align: right;
+}
+.about-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+.about-icon {
+    font-size: 1.5em;
+    min-width: 35px;
+    text-align: center;
+}
+.about-item div {
+    flex: 1;
+    color: #b0bec5;
+    font-size: 0.9em;
+    line-height: 1.8;
+}
+.about-item strong {
+    color: #e0e0e0;
+}
+.about-email {
+    color: #64b5f6;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 5px;
+}
+.about-email:hover {
+    color: #90caf9;
+    text-decoration: underline;
+}
+.developer-section {
+    background: linear-gradient(135deg, rgba(21,101,192,0.2), rgba(13,71,161,0.2));
+    border: 1px solid rgba(33,150,243,0.3);
+}
+.goals-section {
+    background: linear-gradient(135deg, rgba(46,125,50,0.15), rgba(27,94,32,0.15));
+    border: 1px solid rgba(76,175,80,0.3);
+}
+.goals-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+}
+.goals-list li {
+    position: relative;
+    padding-right: 20px;
+    margin-bottom: 8px;
+    color: #a5d6a7;
+}
+.goals-list li::before {
+    content: '✓';
+    position: absolute;
+    right: 0;
+    color: #4caf50;
+    font-weight: bold;
+}
+.about-copyright {
+    background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,193,7,0.05));
+    border: 1px solid rgba(255,193,7,0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+}
+.copyright-logo {
+    font-size: 2.5em;
+    margin-bottom: 8px;
+}
+.about-copyright p {
+    color: #b0bec5;
+    margin: 5px 0;
+    font-size: 0.85em;
+}
+.copyright-year {
+    color: #ffd54f !important;
+    font-weight: bold;
+    font-size: 1em !important;
+    margin-top: 10px !important;
+}
+
+.game-name-section {
+    background: linear-gradient(135deg, rgba(156,39,176,0.15), rgba(103,58,183,0.15));
+    border: 1px solid rgba(156,39,176,0.3);
+}
+.game-subtitle {
+    display: inline-block;
+    color: #ce93d8;
+    font-style: italic;
+    margin-top: 5px;
+    font-size: 1.05em;
+}
+
+.training-section {
+    background: linear-gradient(135deg, rgba(0,150,136,0.15), rgba(0,121,107,0.15));
+    border: 1px solid rgba(0,150,136,0.3);
+}
+.training-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+.training-list li {
+    position: relative;
+    padding-right: 18px;
+    color: #80cbc4;
+    font-size: 0.9em;
+}
+.training-list li::before {
+    content: '•';
+    position: absolute;
+    right: 0;
+    color: #26a69a;
+    font-weight: bold;
+}
+
+.audience-section {
+    background: linear-gradient(135deg, rgba(33,150,243,0.15), rgba(25,118,210,0.15));
+    border: 1px solid rgba(33,150,243,0.3);
+}
+.audience-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+}
+.audience-list li {
+    position: relative;
+    padding-right: 20px;
+    margin-bottom: 6px;
+    color: #90caf9;
+}
+.audience-list li::before {
+    content: '✦';
+    position: absolute;
+    right: 0;
+    color: #42a5f5;
+}
+
+@media (max-width: 500px) {
+    .training-list {
+        grid-template-columns: 1fr;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- شاشة تدوير الجهاز للموبايل -->
+    <div id="rotateScreen">
+        <div class="rotate-icon">📱</div>
+        <h2>يرجى تدوير جهازك</h2>
+        <p>هذه اللعبة تعمل بشكل أفضل في الوضع الأفقي</p>
+        <p>🔄 قم بتدوير هاتفك ليصبح أفقياً</p>
+        <div style="margin-top: 30px;">
+            <span style="font-size: 40px;">📱</span>
+            <span style="font-size: 30px; margin: 0 15px;">➜</span>
+            <span style="font-size: 40px; transform: rotate(90deg); display: inline-block;">📱</span>
+        </div>
+    </div>
+
+    <!-- شاشة البداية -->
+    <div id="startScreen" class="screen active">
+        <div class="start-overlay">
+            <div class="start-content">
+                <div class="start-logo">🏭</div>
+                <h1>مفتش السلامة داخل محطة مياه الشرب</h1>
+                <h2>تدريب تفاعلي على السلامة والصحة المهنية</h2>
+                <div class="start-badge">🎓 معتمد من إدارة السلامة والصحة المهنية</div>
+                <p class="start-desc">تقمّص دور مفتش السلامة داخل محطة مياه شرب مصرية على نهر النيل. تحرّك بين الأقسام، اكتشف المخاطر، استخدم مصفوفة المخاطر لتحديد مستوى الخطورة، اختر معدات الوقاية الصحيحة، واقترح الإجراءات التصحيحية.</p>
+                <div class="start-sections">
+                    <span class="section-tag">🌊 مأخذ النيل</span>
+                    <span class="section-tag">⚙️ الطلمبات</span>
+                    <span class="section-tag">☣️ الكلور</span>
+                    <span class="section-tag">🧪 الشبة</span>
+                    <span class="section-tag">🏊 الترسيب</span>
+                    <span class="section-tag">🔬 المرشحات</span>
+                    <span class="section-tag">🧫 المعمل</span>
+                    <span class="section-tag">⚡ الكهرباء</span>
+                    <span class="section-tag">🔌 المولدات</span>
+                    <span class="section-tag">🛠️ الورشة</span>
+                    <span class="section-tag">🕳️ الخزانات</span>
+                </div>
+                <div class="start-controls">
+                    <p>⌨️ الكمبيوتر: الأسهم أو WASD للحركة | مسافة Space للتفاعل</p>
+                    <p>📱 الموبايل: عصا التحكم للحركة | زر التفاعل</p>
+                    <p>🔊 أصوات بيئية واقعية حسب كل منطقة</p>
+                </div>
+                <button id="btnStart" class="btn-primary btn-large pulse-btn">🎯 ابدأ التفتيش</button>
+                <button id="btnContinue" class="btn-secondary btn-large" style="display:none;">▶️ استكمال التقدم السابق</button>
+                <button id="btnAbout" class="btn-about">ℹ️ حول التطبيق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة حول التطبيق -->
+    <div id="aboutModal" class="modal hidden">
+        <div class="modal-content about-modal">
+            <div class="modal-header about-header">
+                <span>ℹ️</span>
+                <h3>حول التطبيق</h3>
+            </div>
+            <div class="modal-body about-body">
+                <div class="about-logo">🏭</div>
+                <h2 class="about-title">مفتش السلامة داخل محطة مياه الشرب</h2>
+                
+                <div class="about-section">
+                    <div class="about-item">
+                        <span class="about-icon">🔢</span>
+                        <div>
+                            <strong>الإصدار:</strong> 1.0.0
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-section">
+                    <div class="about-item">
+                        <span class="about-icon">📅</span>
+                        <div>
+                            <strong>تاريخ الإصدار:</strong> مايو 2026
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-section">
+                    <div class="about-item">
+                        <span class="about-icon">🏢</span>
+                        <div>
+                            <strong>تم التصميم والتنفيذ بواسطة:</strong><br>
+                            الإدارة العامة للسلامة والصحة المهنية<br>
+                            بالشركة القابضة لمياه الشرب والصرف الصحي
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-section developer-section">
+                    <div class="about-item">
+                        <span class="about-icon">👨‍💻</span>
+                        <div>
+                            <strong>المطور:</strong><br>
+                            م / أحمد الدسوقي<br>
+                            <a href="mailto:ahmed.eldesoky@hcww.com.eg" class="about-email">📧 ahmed.eldesoky@hcww.com.eg</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-section">
+                    <div class="about-item">
+                        <span class="about-icon">🖥️</span>
+                        <div>
+                            <strong>تحت إشراف:</strong><br>
+                            الإدارة العامة لتكنولوجيا المعلومات<br>
+                            بالشركة القابضة لمياه الشرب والصرف الصحي
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-section game-name-section">
+                    <div class="about-item">
+                        <span class="about-icon">🎮</span>
+                        <div>
+                            <strong>اسم التطبيق:</strong><br>
+                            لعبة تقييم المخاطر داخل محطات مياه الشرب<br>
+                            <span class="game-subtitle">"مفتش السلامة داخل محطة مياه الشرب"</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-section goals-section">
+                    <div class="about-item">
+                        <span class="about-icon">🎯</span>
+                        <div>
+                            <strong>أهداف التطبيق:</strong>
+                            <ul class="goals-list">
+                                <li>رفع الوعي بمخاطر السلامة والصحة المهنية داخل محطات مياه الشرب</li>
+                                <li>تدريب العاملين على اكتشاف المخاطر داخل بيئة عمل واقعية</li>
+                                <li>التعرف على مهمات الوقاية الشخصية المناسبة لكل نشاط</li>
+                                <li>تدريب المستخدم على تقييم مستوى الخطورة باستخدام مصفوفة المخاطر</li>
+                                <li>تحسين الاستجابة للمواقف الخطرة والإجراءات التصحيحية</li>
+                                <li>دعم التحول الرقمي والتدريب التفاعلي داخل الشركة</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-section training-section">
+                    <div class="about-item">
+                        <span class="about-icon">🎓</span>
+                        <div>
+                            <strong>المحتوى التدريبي يشمل:</strong>
+                            <ul class="training-list">
+                                <li>المأخذ ومحطات الرفع</li>
+                                <li>عنابر الطلمبات</li>
+                                <li>الكلور والكيماويات</li>
+                                <li>أحواض الترسيب والمرشحات</li>
+                                <li>المعمل</li>
+                                <li>غرف الكهرباء</li>
+                                <li>المولدات والورش</li>
+                                <li>الخزانات والأماكن المغلقة</li>
+                                <li>تقييم المخاطر ومهمات الوقاية الشخصية</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-section audience-section">
+                    <div class="about-item">
+                        <span class="about-icon">👥</span>
+                        <div>
+                            <strong>الفئة المستهدفة:</strong>
+                            <ul class="audience-list">
+                                <li>فرق السلامة والصحة المهنية</li>
+                                <li>فرق التشغيل والصيانة</li>
+                                <li>المهندسون والفنيون</li>
+                                <li>المشرفون ومسؤولو السلامة</li>
+                                <li>المتدربون الجدد داخل محطات المياه</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-copyright">
+                    <div class="copyright-logo">💧</div>
+                    <p>© جميع الحقوق محفوظة</p>
+                    <p>للشركة القابضة لمياه الشرب والصرف الصحي</p>
+                    <p class="copyright-year">© 2026</p>
+                </div>
+
+                <button id="btnCloseAbout" class="btn-primary" style="width:100%;margin-top:20px;">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة اللعبة -->
+    <div id="gameScreen" class="screen">
+        <div id="topBar">
+            <button id="btnMatrix" class="btn-icon">📊 مصفوفة المخاطر</button>
+            <div class="bar-item">
+                <span class="bar-label">❤️</span>
+                <div class="bar-track"><div id="healthBar" class="bar-fill health"></div></div>
+                <span id="healthVal" class="bar-val">100%</span>
+            </div>
+            <div class="bar-item">
+                <span class="bar-label">⏱️</span>
+                <span id="timeVal" class="bar-val time-val">15:00</span>
+            </div>
+            <div class="bar-item">
+                <span class="bar-label">⭐</span>
+                <span id="scoreVal" class="bar-val score-val">0</span>
+            </div>
+            <div class="bar-item">
+                <span class="bar-label">📊</span>
+                <div class="bar-track"><div id="safetyBar" class="bar-fill safety"></div></div>
+                <span id="safetyVal" class="bar-val">0%</span>
+            </div>
+            <button id="btnMenu" class="btn-icon" title="القائمة">☰</button>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+        <div id="sectionIndicator">🌊 مأخذ مياه نهر النيل</div>
+        <div id="soundIndicator"><span class="sound-icon">🔊</span> <span id="soundName">أصوات البيئة</span></div>
+        <div id="interactHint" class="hidden">اضغط <kbd>Space</kbd> للتفاعل</div>
+        <canvas id="minimap" width="180" height="140"></canvas>
+
+        <div id="mobileControls">
+            <div id="joystickContainer">
+                <div id="joystickKnob"></div>
+            </div>
+            <button id="btnInteract" class="btn-action">
+                <span class="action-icon">🔍</span>
+                <span>تفاعل</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- نافذة مصفوفة المخاطر المستقلة -->
+    <div id="matrixModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header purple">
+                <span>📊</span>
+                <h3>مصفوفة تقييم المخاطر</h3>
+            </div>
+            <div class="modal-body">
+                <p style="color:#b0bec5;margin-bottom:15px;text-align:center;">مستوى الخطورة = الاحتمالية × شدة التأثير</p>
+                <div class="matrix-grid" id="matrixGridView">
+                    <div class="matrix-cell header"></div>
+                    <div class="matrix-cell header">بسيط<br>1</div>
+                    <div class="matrix-cell header">محدود<br>2</div>
+                    <div class="matrix-cell header">متوسط<br>3</div>
+                    <div class="matrix-cell header">جسيم<br>4</div>
+                    <div class="matrix-cell header">كارثي<br>5</div>
+                    
+                    <div class="matrix-cell row-header">شبه مؤكد 5</div>
+                    <div class="matrix-cell medium">5</div>
+                    <div class="matrix-cell high">10</div>
+                    <div class="matrix-cell high">15</div>
+                    <div class="matrix-cell extreme">20</div>
+                    <div class="matrix-cell extreme">25</div>
+                    
+                    <div class="matrix-cell row-header">مرجح 4</div>
+                    <div class="matrix-cell low">4</div>
+                    <div class="matrix-cell medium">8</div>
+                    <div class="matrix-cell high">12</div>
+                    <div class="matrix-cell high">16</div>
+                    <div class="matrix-cell extreme">20</div>
+                    
+                    <div class="matrix-cell row-header">محتمل 3</div>
+                    <div class="matrix-cell low">3</div>
+                    <div class="matrix-cell medium">6</div>
+                    <div class="matrix-cell medium">9</div>
+                    <div class="matrix-cell high">12</div>
+                    <div class="matrix-cell high">15</div>
+                    
+                    <div class="matrix-cell row-header">غير محتمل 2</div>
+                    <div class="matrix-cell low">2</div>
+                    <div class="matrix-cell low">4</div>
+                    <div class="matrix-cell medium">6</div>
+                    <div class="matrix-cell medium">8</div>
+                    <div class="matrix-cell high">10</div>
+                    
+                    <div class="matrix-cell row-header">نادر 1</div>
+                    <div class="matrix-cell low">1</div>
+                    <div class="matrix-cell low">2</div>
+                    <div class="matrix-cell low">3</div>
+                    <div class="matrix-cell low">4</div>
+                    <div class="matrix-cell medium">5</div>
+                </div>
+                <div class="matrix-legend">
+                    <div class="legend-item"><div class="legend-dot low"></div> 🟢 منخفض (1-4)</div>
+                    <div class="legend-item"><div class="legend-dot medium"></div> 🟡 متوسط (5-9)</div>
+                    <div class="legend-item"><div class="legend-dot high"></div> 🟠 عالي (10-16)</div>
+                    <div class="legend-item"><div class="legend-dot extreme"></div> 🔴 شديد (17-25)</div>
+                </div>
+                <button id="btnCloseMatrixView" class="btn-secondary" style="width:100%;margin-top:20px;">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة اختيار المهمات (PPE) عند دخول الموقع -->
+    <div id="ppeModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header info">
+                <span>🦺</span>
+                <h3>معدات الوقاية الشخصية المطلوبة</h3>
+            </div>
+            <div class="modal-body">
+                <p id="sectionNamePPE" style="color:#ffc107;font-size:1.1em;font-weight:bold;margin-bottom:15px;"></p>
+                <p style="color:#b0bec5;margin-bottom:20px;">اختر جميع معدات الوقاية الصحيحة المطلوبة لهذا الموقع</p>
+                <div id="ppeSelectGrid" class="ppe-grid"></div>
+                <button id="btnConfirmPPE" class="btn-primary" style="width:100%;margin-top:20px;">✓ تأكيد الاختيار</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة اكتشاف الخطر -->
+    <div id="hazardModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header danger">
+                <span>⚠️</span>
+                <h3 id="hazardTitle">تم اكتشاف خطر!</h3>
+            </div>
+            <div class="modal-body">
+                <div class="hazard-icon-large" id="hazardIcon">⚠️</div>
+                <p id="hazardDesc" class="hazard-desc"></p>
+                
+                <div class="corrective-section">
+                    <h4>🔧 اختر الإجراء التصحيحي المناسب</h4>
+                    <div id="correctiveOptions" class="corrective-options"></div>
+                </div>
+
+                <button id="btnSubmitAssessment" class="btn-primary" style="width:100%">✓ تأكيد التقييم</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة النتيجة -->
+    <div id="resultModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header" id="resultHeader">
+                <span id="resultIcon">✓</span>
+                <h3 id="resultTitle">نتيجة التقييم</h3>
+            </div>
+            <div class="modal-body">
+                <div id="resultFeedback" class="result-feedback"></div>
+                <div id="eduBox" class="edu-box">
+                    <h5>💡 معلومة تعليمية</h5>
+                    <div id="eduContent"></div>
+                </div>
+                <button id="btnCloseResult" class="btn-primary" style="width:100%">متابعة التفتيش ➜</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- قائمة الإيقاف -->
+    <div id="pauseMenu" class="modal hidden">
+        <div class="modal-content pause-modal">
+            <h3>⏸️ إيقاف مؤقت</h3>
+            <div class="pause-stats">
+                <p>النقاط: <span id="pauseScore">0</span></p>
+                <p>المخاطر المكتشفة: <span id="pauseHazards">0/0</span></p>
+                <p>نسبة التقدم: <span id="pauseProgress">0%</span></p>
+            </div>
+            <button id="btnResume" class="btn-primary">▶️ استكمال</button>
+            <button id="btnSave" class="btn-secondary">💾 حفظ التقدم</button>
+            <button id="btnQuit" class="btn-danger">🚪 خروج</button>
+        </div>
+    </div>
+
+    <!-- شاشة النجاح -->
+    <div id="winScreen" class="screen">
+        <div class="win-overlay">
+            <div class="win-content">
+                <div class="win-trophy">🏆</div>
+                <h1>انتهى تفتيش السلامة!</h1>
+                <div id="gradeBadge" class="grade-badge excellent">ممتاز</div>
+                <div class="win-stats">
+                    <div class="win-stat"><span class="ws-icon">⭐</span><span class="ws-label">النقاط</span><span id="finalScore" class="ws-val">0</span></div>
+                    <div class="win-stat"><span class="ws-icon">🔍</span><span class="ws-label">المخاطر</span><span id="finalHazards" class="ws-val">0</span></div>
+                    <div class="win-stat"><span class="ws-icon">✓</span><span class="ws-label">الدقة</span><span id="finalAccuracy" class="ws-val">0%</span></div>
+                    <div class="win-stat"><span class="ws-icon">⏱️</span><span class="ws-label">الوقت</span><span id="finalTime" class="ws-val">0:00</span></div>
+                </div>
+                <button id="btnRestart" class="btn-primary btn-large">🔄 إعادة التفتيش</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ============================================================
+// مفتش السلامة داخل محطة مياه الشرب
+// نسخة محسنة مع مصفوفة المخاطر والأصوات البيئية
+// ============================================================
+
+const TILE = 40;
+const MAP_COLS = 70;
+const MAP_ROWS = 55;
+const MAP_W = MAP_COLS * TILE;
+const MAP_H = MAP_ROWS * TILE;
+const PLAYER_SIZE = 32;
+const PLAYER_SPEED = 4;
+const GAME_TIME = 900;
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const miniCanvas = document.getElementById('minimap');
+const miniCtx = miniCanvas.getContext('2d');
+
+let gameState = {
+    running: false,
+    paused: false,
+    score: 0,
+    health: 100,
+    time: GAME_TIME,
+    progress: 0,
+    discoveredHazards: [],
+    currentSection: 'intake',
+    totalCorrect: 0,
+    totalAttempts: 0
+};
+
+let player = { x: 280, y: 280, w: PLAYER_SIZE, h: PLAYER_SIZE, vx: 0, vy: 0, dir: 'down' };
+let keys = { up: false, down: false, left: false, right: false };
+let joystick = { active: false, dx: 0, dy: 0 };
+let camera = { x: 0, y: 0, w: 0, h: 0 };
+
+// ===== أقسام المحطة =====
+const sections = [
+    { id: 'intake', name: 'مأخذ مياه نهر النيل', x: 2, y: 2, w: 16, h: 14, color: '#0a3d62', borderColor: '#3498db', icon: '🌊', sound: 'water', requiredPPE: ['helmet', 'slip_shoes', 'life_vest', 'harness', 'safety_shoes'] },
+    { id: 'pumps', name: 'غرفة الطلمبات', x: 20, y: 2, w: 14, h: 14, color: '#4a3728', borderColor: '#d35400', icon: '⚙️', sound: 'pumps', requiredPPE: ['helmet', 'gloves', 'goggles', 'safety_shoes', 'ear_protection'] },
+    { id: 'chlorine', name: 'غرفة الكلور', x: 36, y: 2, w: 14, h: 14, color: '#1a4a2e', borderColor: '#27ae60', icon: '☣️', sound: 'chlorine', requiredPPE: ['scba', 'chem_goggles', 'face_shield', 'chem_gloves', 'chem_suit'] },
+    { id: 'alum', name: 'مبنى الشبة', x: 52, y: 2, w: 14, h: 14, color: '#3a2a4a', borderColor: '#8e44ad', icon: '🧪', sound: 'lab', requiredPPE: ['chem_gloves', 'chem_goggles', 'face_shield', 'safety_shoes'] },
+    { id: 'sedimentation', name: 'أحواض الترسيب', x: 2, y: 18, w: 22, h: 14, color: '#1a3a5e', borderColor: '#3498db', icon: '🏊', sound: 'water', requiredPPE: ['helmet', 'slip_shoes', 'harness', 'life_vest', 'safety_shoes'] },
+    { id: 'filters', name: 'المرشحات', x: 26, y: 18, w: 16, h: 14, color: '#2a4a4a', borderColor: '#16a085', icon: '🔬', sound: 'water', requiredPPE: ['helmet', 'slip_shoes', 'gloves', 'safety_shoes'] },
+    { id: 'lab', name: 'المعمل', x: 44, y: 18, w: 14, h: 14, color: '#4a1a3a', borderColor: '#c0392b', icon: '🧫', sound: 'lab', requiredPPE: ['lab_coat', 'chem_goggles', 'face_shield', 'chem_gloves', 'safety_shoes'] },
+    { id: 'electrical', name: 'غرفة الكهرباء', x: 60, y: 18, w: 8, h: 14, color: '#4a4a1a', borderColor: '#f39c12', icon: '⚡', sound: 'electrical', requiredPPE: ['helmet', 'elec_gloves', 'face_shield', 'elec_shoes', 'safety_shoes'] },
+    { id: 'generators', name: 'المولدات', x: 2, y: 34, w: 14, h: 12, color: '#3a3a3a', borderColor: '#7f8c8d', icon: '🔌', sound: 'generators', requiredPPE: ['helmet', 'ear_protection', 'safety_shoes', 'gloves'] },
+    { id: 'workshop', name: 'الورشة والصيانة', x: 18, y: 34, w: 16, h: 12, color: '#5a3a2a', borderColor: '#e67e22', icon: '🛠️', sound: 'workshop', requiredPPE: ['helmet', 'weld_mask', 'weld_gloves', 'safety_shoes', 'goggles'] },
+    { id: 'tanks', name: 'الخزانات والأماكن المغلقة', x: 36, y: 34, w: 18, h: 12, color: '#2a2a4a', borderColor: '#9b59b6', icon: '🕳️', sound: 'tanks', requiredPPE: ['helmet', 'scba', 'gas_detector', 'harness', 'safety_shoes'] }
+];
+
+// ===== معدات الوقاية =====
+const allPPE = [
+    { id: 'helmet', name: 'خوذة', icon: '⛑️' },
+    { id: 'safety_shoes', name: 'حذاء أمان', icon: '👢' },
+    { id: 'slip_shoes', name: 'حذاء مانع انزلاق', icon: '🥾' },
+    { id: 'gloves', name: 'قفازات', icon: '🧤' },
+    { id: 'chem_gloves', name: 'قفازات كيميائية', icon: '🧤' },
+    { id: 'elec_gloves', name: 'قفازات عازلة', icon: '🧤' },
+    { id: 'weld_gloves', name: 'قفازات لحام', icon: '🧤' },
+    { id: 'life_vest', name: 'سترة نجاة', icon: '🦺' },
+    { id: 'harness', name: 'حزام أمان', icon: '🪢' },
+    { id: 'ear_protection', name: 'واقي أذن', icon: '🎧' },
+    { id: 'goggles', name: 'نظارة حماية', icon: '🥽' },
+    { id: 'chem_goggles', name: 'نظارة كيميائية', icon: '🥽' },
+    { id: 'face_shield', name: 'Face Shield', icon: '🛡️' },
+    { id: 'respirator', name: 'كمامة', icon: '😷' },
+    { id: 'scba', name: 'جهاز SCBA', icon: '🫁' },
+    { id: 'chem_suit', name: 'بدلة كيميائية', icon: '🥼' },
+    { id: 'lab_coat', name: 'بالطو معمل', icon: '🥼' },
+    { id: 'weld_mask', name: 'قناع لحام', icon: '🎭' },
+    { id: 'gas_detector', name: 'كاشف غازات', icon: '📟' },
+    { id: 'elec_shoes', name: 'حذاء عازل', icon: '👢' }
+];
+
+// ===== المخاطر =====
+const hazards = [
+    // المأخذ - نهر النيل
+    { id: 'h1', section: 'intake', x: 6, y: 6, name: 'خطر السقوط في نهر النيل', desc: 'حافة المأخذ على نهر النيل غير محمية. المياه عميقة وتيارها قوي. خطر الغرق!', icon: '🌊', likelihood: 4, severity: 5, requiredPPE: ['helmet', 'slip_shoes', 'life_vest', 'harness'], correctiveAction: 'install_barriers', discovered: false },
+    { id: 'h2', section: 'intake', x: 12, y: 8, name: 'أرضية مبللة من مياه النيل', desc: 'تسرب مياه النيل على الأرضية يسبب انزلاق خطير.', icon: '💧', likelihood: 4, severity: 3, requiredPPE: ['helmet', 'slip_shoes'], correctiveAction: 'dry_floor', discovered: false },
+    { id: 'h3', section: 'intake', x: 9, y: 12, name: 'طلمبات السحب الدوارة', desc: 'أجزاء دوارة مكشوفة في طلمبات سحب مياه النيل.', icon: '⚙️', likelihood: 3, severity: 5, requiredPPE: ['helmet', 'safety_shoes', 'gloves', 'goggles'], correctiveAction: 'install_guards', discovered: false },
+    { id: 'h4', section: 'intake', x: 15, y: 6, name: 'كهرباء قرب مياه النيل', desc: 'لوحة كهرباء قريبة من حافة النيل ورذاذ المياه.', icon: '⚡', likelihood: 3, severity: 5, requiredPPE: ['helmet', 'elec_gloves', 'elec_shoes'], correctiveAction: 'isolate_power', discovered: false },
+    
+    // غرفة الطلمبات
+    { id: 'h5', section: 'pumps', x: 24, y: 6, name: 'محاور طلمبات مكشوفة', desc: 'المحاور الدوارة للطلمبات الكبيرة بدون أغطية حماية.', icon: '⚙️', likelihood: 4, severity: 5, requiredPPE: ['helmet', 'gloves', 'goggles', 'safety_shoes', 'ear_protection'], correctiveAction: 'install_guards', discovered: false },
+    { id: 'h6', section: 'pumps', x: 28, y: 10, name: 'ضوضاء عالية جداً', desc: 'مستوى الضوضاء يتجاوز 95 ديسيبل. خطر فقدان السمع!', icon: '🔊', likelihood: 5, severity: 3, requiredPPE: ['helmet', 'ear_protection', 'safety_shoes'], correctiveAction: 'provide_ppe', discovered: false },
+    { id: 'h7', section: 'pumps', x: 31, y: 7, name: 'تسرب زيوت التشحيم', desc: 'بقع زيت على الأرضية من الطلمبات.', icon: '🛢️', likelihood: 4, severity: 3, requiredPPE: ['slip_shoes', 'gloves'], correctiveAction: 'clean_spill', discovered: false },
+    
+    // غرفة الكلور
+    { id: 'h8', section: 'chlorine', x: 40, y: 6, name: 'تسرب غاز كلور', desc: 'رائحة كلور نفاذة! خطر اختناق شديد وحروق للجهاز التنفسي!', icon: '☁️', likelihood: 3, severity: 5, requiredPPE: ['scba', 'chem_goggles', 'face_shield', 'chem_gloves', 'chem_suit'], correctiveAction: 'evacuate_repair', discovered: false },
+    { id: 'h9', section: 'chlorine', x: 45, y: 10, name: 'أسطوانات غير مثبتة', desc: 'أسطوانات الكلور قد تسقط وتسبب كارثة.', icon: '🛢️', likelihood: 3, severity: 5, requiredPPE: ['scba', 'chem_gloves', 'chem_suit'], correctiveAction: 'secure_cylinders', discovered: false },
+    { id: 'h10', section: 'chlorine', x: 47, y: 6, name: 'حروق كيميائية', desc: 'خطر ملامسة محلول الكلور المركز.', icon: '⚗️', likelihood: 3, severity: 4, requiredPPE: ['chem_goggles', 'face_shield', 'chem_gloves', 'chem_suit'], correctiveAction: 'use_ppe', discovered: false },
+    
+    // مبنى الشبة
+    { id: 'h11', section: 'alum', x: 56, y: 6, name: 'انسكاب محلول الشبة', desc: 'انسكاب على الأرضية. مادة كاوية!', icon: '🧪', likelihood: 4, severity: 3, requiredPPE: ['chem_gloves', 'chem_goggles', 'face_shield'], correctiveAction: 'clean_spill', discovered: false },
+    { id: 'h12', section: 'alum', x: 60, y: 10, name: 'أبخرة كيميائية', desc: 'أبخرة متصاعدة بدون تهوية كافية.', icon: '💨', likelihood: 3, severity: 3, requiredPPE: ['respirator', 'chem_goggles'], correctiveAction: 'improve_ventilation', discovered: false },
+    
+    // أحواض الترسيب
+    { id: 'h13', section: 'sedimentation', x: 8, y: 22, name: 'سقوط في حوض الترسيب', desc: 'حافة الحوض بدون درابزين كافٍ. عمق 4 أمتار!', icon: '⬇️', likelihood: 3, severity: 5, requiredPPE: ['helmet', 'slip_shoes', 'harness', 'life_vest'], correctiveAction: 'install_barriers', discovered: false },
+    { id: 'h14', section: 'sedimentation', x: 16, y: 26, name: 'غرق في حوض الترسيب', desc: 'مياه عميقة بدون معدات إنقاذ.', icon: '🌊', likelihood: 2, severity: 5, requiredPPE: ['helmet', 'life_vest', 'harness'], correctiveAction: 'provide_rescue', discovered: false },
+    { id: 'h15', section: 'sedimentation', x: 20, y: 23, name: 'ممرات زلقة', desc: 'الممرات حول الأحواض مغطاة بالطحالب.', icon: '💧', likelihood: 4, severity: 3, requiredPPE: ['helmet', 'slip_shoes'], correctiveAction: 'anti_slip', discovered: false },
+    
+    // المرشحات
+    { id: 'h16', section: 'filters', x: 30, y: 22, name: 'انزلاق في المرشحات', desc: 'أرضية رطبة باستمرار.', icon: '💧', likelihood: 4, severity: 3, requiredPPE: ['helmet', 'slip_shoes', 'gloves'], correctiveAction: 'dry_floor', discovered: false },
+    { id: 'h17', section: 'filters', x: 36, y: 26, name: 'صيانة على ارتفاع', desc: 'العمل على ارتفاع 3 أمتار بدون حماية.', icon: '📐', likelihood: 3, severity: 5, requiredPPE: ['helmet', 'harness', 'safety_shoes'], correctiveAction: 'use_scaffold', discovered: false },
+    
+    // المعمل
+    { id: 'h18', section: 'lab', x: 48, y: 22, name: 'كيماويات مركزة', desc: 'أحماض وقواعد مركزة مكشوفة.', icon: '⚗️', likelihood: 3, severity: 4, requiredPPE: ['lab_coat', 'chem_goggles', 'face_shield', 'chem_gloves'], correctiveAction: 'proper_storage', discovered: false },
+    { id: 'h19', section: 'lab', x: 52, y: 26, name: 'زجاج مكسور', desc: 'أدوات زجاجية مكسورة على المنضدة.', icon: '💉', likelihood: 3, severity: 3, requiredPPE: ['lab_coat', 'goggles', 'gloves', 'safety_shoes'], correctiveAction: 'clean_dispose', discovered: false },
+    { id: 'h20', section: 'lab', x: 55, y: 23, name: 'أبخرة ضارة', desc: 'أبخرة من التجارب بدون شفاط.', icon: '💨', likelihood: 4, severity: 3, requiredPPE: ['lab_coat', 'respirator', 'chem_goggles'], correctiveAction: 'use_fume_hood', discovered: false },
+    
+    // غرفة الكهرباء
+    { id: 'h21', section: 'electrical', x: 63, y: 22, name: 'صعق كهربائي', desc: 'لوحات مفتوحة بجهد عالي!', icon: '⚡', likelihood: 3, severity: 5, requiredPPE: ['helmet', 'elec_gloves', 'face_shield', 'elec_shoes'], correctiveAction: 'lockout', discovered: false },
+    { id: 'h22', section: 'electrical', x: 65, y: 27, name: 'Arc Flash', desc: 'خطر الوميض الكهربائي القاتل!', icon: '💥', likelihood: 2, severity: 5, requiredPPE: ['helmet', 'elec_gloves', 'face_shield', 'elec_shoes'], correctiveAction: 'arc_protection', discovered: false },
+    
+    // المولدات
+    { id: 'h23', section: 'generators', x: 6, y: 38, name: 'وقود ديزل', desc: 'خزان وقود قرب مصادر حرارة!', icon: '⛽', likelihood: 2, severity: 5, requiredPPE: ['helmet', 'gloves', 'goggles', 'safety_shoes'], correctiveAction: 'relocate_fuel', discovered: false },
+    { id: 'h24', section: 'generators', x: 12, y: 42, name: 'ضوضاء المولدات', desc: 'صوت عالٍ جداً عند التشغيل.', icon: '🔊', likelihood: 5, severity: 3, requiredPPE: ['helmet', 'ear_protection'], correctiveAction: 'provide_ppe', discovered: false },
+    { id: 'h25', section: 'generators', x: 10, y: 38, name: 'عادم سام', desc: 'غازات العادم في مكان مغلق.', icon: '💨', likelihood: 3, severity: 4, requiredPPE: ['respirator', 'goggles'], correctiveAction: 'improve_ventilation', discovered: false },
+    
+    // الورشة
+    { id: 'h26', section: 'workshop', x: 22, y: 38, name: 'أعمال لحام', desc: 'لحام بدون حواجز. خطر على العيون!', icon: '🔥', likelihood: 4, severity: 4, requiredPPE: ['weld_mask', 'weld_gloves', 'safety_shoes'], correctiveAction: 'install_screens', discovered: false },
+    { id: 'h27', section: 'workshop', x: 28, y: 42, name: 'شرر متطاير', desc: 'شرر من القطع والجلخ.', icon: '✨', likelihood: 4, severity: 3, requiredPPE: ['goggles', 'face_shield', 'gloves', 'safety_shoes'], correctiveAction: 'clear_area', discovered: false },
+    { id: 'h28', section: 'workshop', x: 31, y: 38, name: 'سقوط أدوات', desc: 'أدوات ثقيلة على أرفف غير مثبتة.', icon: '🔧', likelihood: 3, severity: 3, requiredPPE: ['helmet', 'safety_shoes'], correctiveAction: 'secure_tools', discovered: false },
+    
+    // الخزانات
+    { id: 'h29', section: 'tanks', x: 42, y: 38, name: 'نقص أكسجين', desc: 'مكان مغلق! خطر اختناق!', icon: '😵', likelihood: 3, severity: 5, requiredPPE: ['scba', 'gas_detector', 'helmet', 'harness'], correctiveAction: 'confined_permit', discovered: false },
+    { id: 'h30', section: 'tanks', x: 48, y: 42, name: 'غازات سامة H2S', desc: 'غاز كبريتيد الهيدروجين القاتل!', icon: '☠️', likelihood: 3, severity: 5, requiredPPE: ['scba', 'gas_detector', 'harness'], correctiveAction: 'gas_test', discovered: false },
+    { id: 'h31', section: 'tanks', x: 50, y: 38, name: 'احتجاز داخل الخزان', desc: 'خطر عدم القدرة على الخروج.', icon: '🚨', likelihood: 2, severity: 5, requiredPPE: ['helmet', 'harness', 'gas_detector'], correctiveAction: 'rescue_plan', discovered: false }
+];
+
+// ===== الإجراءات التصحيحية =====
+const correctiveActions = {
+    install_barriers: { text: 'تركيب درابزين وحواجز حماية', icon: '🚧' },
+    dry_floor: { text: 'تجفيف الأرضية ووضع علامات', icon: '🧹' },
+    install_guards: { text: 'تركيب أغطية للأجزاء المتحركة', icon: '🛡️' },
+    isolate_power: { text: 'عزل الكهرباء عن مصادر المياه', icon: '🔌' },
+    provide_ppe: { text: 'توفير وإلزام ارتداء PPE', icon: '🦺' },
+    clean_spill: { text: 'تنظيف الانسكاب فوراً', icon: '🧹' },
+    evacuate_repair: { text: 'إخلاء وإصلاح التسرب', icon: '🚨' },
+    secure_cylinders: { text: 'تثبيت الأسطوانات بسلاسل', icon: '⛓️' },
+    use_ppe: { text: 'الالتزام بارتداء PPE', icon: '🦺' },
+    improve_ventilation: { text: 'تحسين التهوية', icon: '💨' },
+    provide_rescue: { text: 'توفير معدات إنقاذ', icon: '🛟' },
+    anti_slip: { text: 'معالجة مانعة للانزلاق', icon: '🦶' },
+    lockout: { text: 'تطبيق LOTO', icon: '🔒' },
+    use_scaffold: { text: 'استخدام سقالات آمنة', icon: '🪜' },
+    proper_storage: { text: 'تخزين صحيح للكيماويات', icon: '📦' },
+    clean_dispose: { text: 'تنظيف والتخلص الآمن', icon: '🗑️' },
+    use_fume_hood: { text: 'استخدام شفاط الأبخرة', icon: '🌀' },
+    arc_protection: { text: 'ارتداء ملابس Arc Flash', icon: '⚡' },
+    relocate_fuel: { text: 'إبعاد الوقود عن الحرارة', icon: '🚚' },
+    install_screens: { text: 'تركيب حواجز اللحام', icon: '🔲' },
+    clear_area: { text: 'إخلاء المنطقة', icon: '🧹' },
+    secure_tools: { text: 'تثبيت الأرفف والأدوات', icon: '🔩' },
+    confined_permit: { text: 'تصريح دخول مكان مغلق', icon: '📋' },
+    gas_test: { text: 'اختبار الغازات قبل الدخول', icon: '📟' },
+    rescue_plan: { text: 'خطة إنقاذ ومراقب خارجي', icon: '🚑' }
+};
+
+// ===== مصفوفة المخاطر =====
+const riskMatrix = [
+    [1, 2, 3, 4, 5],      // نادر
+    [2, 4, 6, 8, 10],     // غير محتمل
+    [3, 6, 9, 12, 15],    // محتمل
+    [4, 8, 12, 16, 20],   // مرجح
+    [5, 10, 15, 20, 25]   // شبه مؤكد
+];
+
+const likelihoodLabels = ['نادر', 'غير محتمل', 'محتمل', 'مرجح', 'شبه مؤكد'];
+const severityLabels = ['بسيط', 'محدود', 'متوسط', 'جسيم', 'كارثي'];
+
+function getRiskLevel(score) {
+    if (score <= 4) return { level: 'low', text: '🟢 منخفض', color: 'low' };
+    if (score <= 9) return { level: 'medium', text: '🟡 متوسط', color: 'medium' };
+    if (score <= 16) return { level: 'high', text: '🟠 عالي', color: 'high' };
+    return { level: 'extreme', text: '🔴 شديد الخطورة', color: 'extreme' };
+}
+
+function getRiskClass(score) {
+    if (score <= 4) return 'low';
+    if (score <= 9) return 'medium';
+    if (score <= 16) return 'high';
+    return 'extreme';
+}
+
+// ===== نظام الصوت البيئي =====
+const SpatialAudio = {
+    ctx: null,
+    oscillators: {},
+    gains: {},
+    noises: {},
+    currentSound: null,
+    masterGain: null,
+    
+    init() {
+        try {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            this.masterGain = this.ctx.createGain();
+            this.masterGain.gain.value = 0.3;
+            this.masterGain.connect(this.ctx.destination);
+        } catch(e) { console.log('Audio not supported'); }
+    },
+    
+    createNoise(type) {
+        if (!this.ctx) return null;
+        const bufferSize = this.ctx.sampleRate * 2;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        
+        const source = this.ctx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true;
+        return source;
+    },
+    
+    playEnvironment(soundType, volume = 0.15) {
+        if (!this.ctx || this.currentSound === soundType) return;
+        
+        this.stopAll();
+        this.currentSound = soundType;
+        
+        const gain = this.ctx.createGain();
+        gain.gain.value = 0;
+        gain.connect(this.masterGain);
+        
+        // تدرج الصوت
+        gain.gain.linearRampToValueAtTime(volume, this.ctx.currentTime + 0.5);
+        
+        switch(soundType) {
+            case 'water':
+                // صوت مياه النيل
+                const waterNoise = this.createNoise();
+                const waterFilter = this.ctx.createBiquadFilter();
+                waterFilter.type = 'lowpass';
+                waterFilter.frequency.value = 400;
+                waterNoise.connect(waterFilter);
+                waterFilter.connect(gain);
+                waterNoise.start();
+                this.noises.water = { source: waterNoise, gain: gain };
+                
+                // أمواج
+                const waveOsc = this.ctx.createOscillator();
+                const waveGain = this.ctx.createGain();
+                waveOsc.type = 'sine';
+                waveOsc.frequency.value = 0.5;
+                waveGain.gain.value = 0.02;
+                
+                const waveMod = this.ctx.createOscillator();
+                waveMod.type = 'sine';
+                waveMod.frequency.value = 80;
+                waveMod.connect(waveGain);
+                waveMod.start();
+                waveOsc.connect(this.masterGain);
+                waveOsc.start();
+                this.oscillators.wave = waveOsc;
+                break;
+                
+            case 'pumps':
+                // صوت طلمبات ثقيل
+                const pumpOsc = this.ctx.createOscillator();
+                pumpOsc.type = 'sawtooth';
+                pumpOsc.frequency.value = 60;
+                const pumpGain = this.ctx.createGain();
+                pumpGain.gain.value = 0.08;
+                pumpOsc.connect(pumpGain);
+                pumpGain.connect(gain);
+                pumpOsc.start();
+                this.oscillators.pump = pumpOsc;
+                
+                // اهتزاز
+                const vibOsc = this.ctx.createOscillator();
+                vibOsc.type = 'sine';
+                vibOsc.frequency.value = 25;
+                const vibGain = this.ctx.createGain();
+                vibGain.gain.value = 0.05;
+                vibOsc.connect(vibGain);
+                vibGain.connect(gain);
+                vibOsc.start();
+                this.oscillators.vib = vibOsc;
+                
+                this.gains.pumps = gain;
+                break;
+                
+            case 'chlorine':
+                // صوت تهوية ومراوح
+                const ventNoise = this.createNoise();
+                const ventFilter = this.ctx.createBiquadFilter();
+                ventFilter.type = 'bandpass';
+                ventFilter.frequency.value = 800;
+                ventFilter.Q.value = 2;
+                ventNoise.connect(ventFilter);
+                ventFilter.connect(gain);
+                ventNoise.start();
+                this.noises.vent = { source: ventNoise, gain: gain };
+                
+                // إنذار خفيف
+                const alarmOsc = this.ctx.createOscillator();
+                alarmOsc.type = 'sine';
+                alarmOsc.frequency.value = 440;
+                const alarmGain = this.ctx.createGain();
+                alarmGain.gain.value = 0.02;
+                // نبض
+                const lfo = this.ctx.createOscillator();
+                lfo.frequency.value = 0.5;
+                lfo.connect(alarmGain.gain);
+                alarmOsc.connect(alarmGain);
+                alarmGain.connect(gain);
+                alarmOsc.start();
+                lfo.start();
+                this.oscillators.alarm = alarmOsc;
+                break;
+                
+            case 'lab':
+                // أصوات أجهزة معملية
+                const beepOsc = this.ctx.createOscillator();
+                beepOsc.type = 'sine';
+                beepOsc.frequency.value = 1000;
+                const beepGain = this.ctx.createGain();
+                beepGain.gain.value = 0;
+                beepOsc.connect(beepGain);
+                beepGain.connect(gain);
+                beepOsc.start();
+                
+                // بيب متقطع
+                const beepInterval = setInterval(() => {
+                    if (this.currentSound !== 'lab') {
+                        clearInterval(beepInterval);
+                        return;
+                    }
+                    beepGain.gain.setValueAtTime(0.03, this.ctx.currentTime);
+                    beepGain.gain.setValueAtTime(0, this.ctx.currentTime + 0.1);
+                }, 2000);
+                
+                this.oscillators.beep = beepOsc;
+                this.gains.lab = gain;
+                break;
+                
+            case 'electrical':
+                // أزيز كهربائي
+                const elecOsc = this.ctx.createOscillator();
+                elecOsc.type = 'sawtooth';
+                elecOsc.frequency.value = 50;
+                const elecGain = this.ctx.createGain();
+                elecGain.gain.value = 0.04;
+                elecOsc.connect(elecGain);
+                elecGain.connect(gain);
+                elecOsc.start();
+                
+                // طنين
+                const humOsc = this.ctx.createOscillator();
+                humOsc.type = 'sine';
+                humOsc.frequency.value = 100;
+                const humGain = this.ctx.createGain();
+                humGain.gain.value = 0.03;
+                humOsc.connect(humGain);
+                humGain.connect(gain);
+                humOsc.start();
+                
+                this.oscillators.elec = elecOsc;
+                this.oscillators.hum = humOsc;
+                this.gains.elec = gain;
+                break;
+                
+            case 'generators':
+                // صوت محرك ديزل
+                const engineOsc = this.ctx.createOscillator();
+                engineOsc.type = 'square';
+                engineOsc.frequency.value = 30;
+                const engineGain = this.ctx.createGain();
+                engineGain.gain.value = 0.1;
+                engineOsc.connect(engineGain);
+                engineGain.connect(gain);
+                engineOsc.start();
+                
+                // عادم
+                const exhaustNoise = this.createNoise();
+                const exhaustFilter = this.ctx.createBiquadFilter();
+                exhaustFilter.type = 'lowpass';
+                exhaustFilter.frequency.value = 200;
+                exhaustNoise.connect(exhaustFilter);
+                exhaustFilter.connect(gain);
+                exhaustNoise.start();
+                
+                this.oscillators.engine = engineOsc;
+                this.noises.exhaust = { source: exhaustNoise, gain: gain };
+                break;
+                
+            case 'workshop':
+                // صوت لحام وجلخ
+                const grindNoise = this.createNoise();
+                const grindFilter = this.ctx.createBiquadFilter();
+                grindFilter.type = 'highpass';
+                grindFilter.frequency.value = 2000;
+                grindNoise.connect(grindFilter);
+                grindFilter.connect(gain);
+                grindNoise.start();
+                
+                // طرق متقطع
+                const hammerInterval = setInterval(() => {
+                    if (this.currentSound !== 'workshop') {
+                        clearInterval(hammerInterval);
+                        return;
+                    }
+                    this.playHit();
+                }, 3000 + Math.random() * 2000);
+                
+                this.noises.grind = { source: grindNoise, gain: gain };
+                break;
+                
+            case 'tanks':
+                // صدى وأصوات مكتومة
+                const echoNoise = this.createNoise();
+                const echoFilter = this.ctx.createBiquadFilter();
+                echoFilter.type = 'lowpass';
+                echoFilter.frequency.value = 150;
+                echoFilter.Q.value = 10;
+                echoNoise.connect(echoFilter);
+                echoFilter.connect(gain);
+                echoNoise.start();
+                
+                // قطرات ماء
+                const dripInterval = setInterval(() => {
+                    if (this.currentSound !== 'tanks') {
+                        clearInterval(dripInterval);
+                        return;
+                    }
+                    this.playDrip();
+                }, 2000 + Math.random() * 3000);
+                
+                this.noises.echo = { source: echoNoise, gain: gain };
+                break;
+        }
+        
+        document.getElementById('soundName').textContent = this.getSoundName(soundType);
+    },
+    
+    getSoundName(type) {
+        const names = {
+            water: '🌊 مياه النيل',
+            pumps: '⚙️ طلمبات',
+            chlorine: '☣️ تهوية',
+            lab: '🔬 أجهزة',
+            electrical: '⚡ أزيز',
+            generators: '🔌 محركات',
+            workshop: '🛠️ ورشة',
+            tanks: '🕳️ صدى'
+        };
+        return names[type] || 'صوت البيئة';
+    },
+    
+    playHit() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = 150;
+        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.1);
+    },
+    
+    playDrip() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(2000, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(500, this.ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.15);
+    },
+    
+    playDiscover() {
+        if (!this.ctx) return;
+        [523, 659, 784].forEach((freq, i) => {
+            setTimeout(() => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(this.masterGain);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.15);
+            }, i * 100);
+        });
+    },
+    
+    playSuccess() {
+        if (!this.ctx) return;
+        [523, 659, 784, 1047].forEach((freq, i) => {
+            setTimeout(() => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
+                osc.connect(gain);
+                gain.connect(this.masterGain);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.2);
+            }, i * 120);
+        });
+    },
+    
+    playError() {
+        if (!this.ctx) return;
+        [300, 200].forEach((freq, i) => {
+            setTimeout(() => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.25);
+                osc.connect(gain);
+                gain.connect(this.masterGain);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.25);
+            }, i * 200);
+        });
+    },
+    
+    playStep() {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = 80 + Math.random() * 40;
+        gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
+    },
+    
+    stopAll() {
+        Object.values(this.oscillators).forEach(osc => {
+            try { osc.stop(); } catch(e) {}
+        });
+        Object.values(this.noises).forEach(n => {
+            try { n.source.stop(); } catch(e) {}
+        });
+        this.oscillators = {};
+        this.noises = {};
+        this.gains = {};
+        this.currentSound = null;
+    }
+};
+
+// ===== الجدران =====
+let walls = [];
+
+function buildWalls() {
+    walls = [];
+    
+    // حدود الخريطة
+    for (let c = 0; c < MAP_COLS; c++) {
+        walls.push({ x: c, y: 0 });
+        walls.push({ x: c, y: MAP_ROWS - 1 });
+    }
+    for (let r = 0; r < MAP_ROWS; r++) {
+        walls.push({ x: 0, y: r });
+        walls.push({ x: MAP_COLS - 1, y: r });
+    }
+    
+    // جدران الأقسام
+    sections.forEach(sec => {
+        for (let c = sec.x; c < sec.x + sec.w; c++) {
+            walls.push({ x: c, y: sec.y });
+            walls.push({ x: c, y: sec.y + sec.h - 1 });
+        }
+        for (let r = sec.y; r < sec.y + sec.h; r++) {
+            walls.push({ x: sec.x, y: r });
+            walls.push({ x: sec.x + sec.w - 1, y: r });
+        }
+    });
+    
+    // الأبواب
+    const doors = [
+        // صف أول
+        { x: 10, y: 15 }, { x: 11, y: 15 },
+        { x: 26, y: 15 }, { x: 27, y: 15 },
+        { x: 42, y: 15 }, { x: 43, y: 15 },
+        { x: 58, y: 15 }, { x: 59, y: 15 },
+        // صف ثاني
+        { x: 12, y: 18 }, { x: 13, y: 18 },
+        { x: 34, y: 18 }, { x: 35, y: 18 },
+        { x: 50, y: 18 }, { x: 51, y: 18 },
+        { x: 63, y: 18 }, { x: 64, y: 18 },
+        // صف ثالث
+        { x: 8, y: 34 }, { x: 9, y: 34 },
+        { x: 26, y: 34 }, { x: 27, y: 34 },
+        { x: 44, y: 34 }, { x: 45, y: 34 },
+        // روابط أفقية
+        { x: 12, y: 31 }, { x: 13, y: 31 },
+        { x: 22, y: 31 }, { x: 23, y: 31 },
+        { x: 40, y: 31 }, { x: 41, y: 31 },
+        // روابط عمودية
+        { x: 19, y: 8 }, { x: 19, y: 9 },
+        { x: 35, y: 8 }, { x: 35, y: 9 },
+        { x: 51, y: 8 }, { x: 51, y: 9 },
+        { x: 25, y: 24 }, { x: 25, y: 25 },
+        { x: 43, y: 24 }, { x: 43, y: 25 },
+        { x: 59, y: 24 }, { x: 59, y: 25 },
+        { x: 17, y: 40 }, { x: 17, y: 41 },
+        { x: 35, y: 40 }, { x: 35, y: 41 }
+    ];
+    
+    walls = walls.filter(w => !doors.some(d => d.x === w.x && d.y === w.y));
+}
+
+function isWall(px, py) {
+    const gx = Math.floor(px / TILE);
+    const gy = Math.floor(py / TILE);
+    return walls.some(w => w.x === gx && w.y === gy);
+}
+
+function collidesWithWall(x, y, w, h) {
+    const padding = 4;
+    return isWall(x + padding, y + padding) || 
+           isWall(x + w - padding, y + padding) || 
+           isWall(x + padding, y + h - padding) || 
+           isWall(x + w - padding, y + h - padding);
+}
+
+// ===== الرسم =====
+function drawMap() {
+    // خلفية
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, MAP_W, MAP_H);
+    
+    // شبكة
+    ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+    for (let c = 0; c < MAP_COLS; c++) {
+        for (let r = 0; r < MAP_ROWS; r++) {
+            ctx.strokeRect(c * TILE, r * TILE, TILE, TILE);
+        }
+    }
+    
+    // ممرات
+    ctx.fillStyle = '#2a3a4a';
+    ctx.fillRect(1 * TILE, 16 * TILE, (MAP_COLS - 2) * TILE, 2 * TILE);
+    ctx.fillRect(1 * TILE, 32 * TILE, (MAP_COLS - 2) * TILE, 2 * TILE);
+    ctx.fillRect(1 * TILE, 46 * TILE, (MAP_COLS - 2) * TILE, 2 * TILE);
+    
+    // خطوط الممرات
+    ctx.strokeStyle = 'rgba(241,196,15,0.25)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([20, 15]);
+    ctx.beginPath();
+    ctx.moveTo(TILE, 17 * TILE);
+    ctx.lineTo((MAP_COLS - 1) * TILE, 17 * TILE);
+    ctx.moveTo(TILE, 33 * TILE);
+    ctx.lineTo((MAP_COLS - 1) * TILE, 33 * TILE);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // الأقسام
+    sections.forEach(sec => {
+        drawSection(sec);
+    });
+    
+    // الجدران
+    walls.forEach(w => {
+        const sec = sections.find(s => w.x >= s.x && w.x < s.x + s.w && w.y >= s.y && w.y < s.y + s.h);
+        const baseColor = sec ? sec.borderColor : '#4a5568';
+        
+        ctx.fillStyle = baseColor;
+        ctx.fillRect(w.x * TILE, w.y * TILE, TILE, TILE);
+        
+        ctx.fillStyle = shadeColor(baseColor, 25);
+        ctx.fillRect(w.x * TILE, w.y * TILE, TILE, 4);
+        ctx.fillRect(w.x * TILE + TILE - 4, w.y * TILE, 4, TILE);
+        
+        ctx.fillStyle = shadeColor(baseColor, -35);
+        ctx.fillRect(w.x * TILE, w.y * TILE + TILE - 4, TILE, 4);
+        ctx.fillRect(w.x * TILE, w.y * TILE, 4, TILE);
+    });
+    
+    // المخاطر
+    hazards.forEach(h => {
+        const x = h.x * TILE + TILE / 2;
+        const y = h.y * TILE + TILE / 2;
+        
+        if (!h.discovered) {
+            const pulse = Math.sin(Date.now() / 350) * 0.4 + 0.5;
+            ctx.fillStyle = `rgba(255,50,50,${pulse * 0.25})`;
+            ctx.beginPath();
+            ctx.arc(x, y, TILE, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = `rgba(255,50,50,${pulse * 0.9 + 0.1})`;
+            ctx.font = 'bold 22px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('❓', x, y);
+        } else {
+            ctx.fillStyle = 'rgba(76,175,80,0.35)';
+            ctx.fillRect(h.x * TILE + 5, h.y * TILE + 5, TILE - 10, TILE - 10);
+            ctx.fillStyle = '#4caf50';
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('✓', x, y);
+        }
+    });
+}
+
+function drawSection(sec) {
+    const x = sec.x * TILE;
+    const y = sec.y * TILE;
+    const w = sec.w * TILE;
+    const h = sec.h * TILE;
+    
+    // أرضية
+    const gradient = ctx.createLinearGradient(x, y, x + w, y + h);
+    gradient.addColorStop(0, sec.color);
+    gradient.addColorStop(1, shadeColor(sec.color, -20));
+    ctx.fillStyle = gradient;
+    ctx.fillRect(x, y, w, h);
+    
+    // نمط أرضية
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    for (let i = 0; i < sec.w; i += 2) {
+        for (let j = 0; j < sec.h; j += 2) {
+            ctx.fillRect((sec.x + i) * TILE, (sec.y + j) * TILE, TILE, TILE);
+        }
+    }
+    
+    // حدود
+    ctx.strokeStyle = sec.borderColor;
+    ctx.lineWidth = 4;
+    ctx.strokeRect(x + 2, y + 2, w - 4, h - 4);
+    
+    // ظل
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fillRect(x, y, w, 8);
+    ctx.fillRect(x, y, 8, h);
+    
+    // اسم (في منتصف الموقع مع خلفية)
+    const titleX = x + w / 2;
+    const titleY = y + h / 2;
+    
+    // قياس النص لرسم خلفية مناسبة
+    ctx.font = 'bold 18px Segoe UI, Arial';
+    const titleText = sec.icon + ' ' + sec.name;
+    const metrics = ctx.measureText(titleText);
+    const textWidth = metrics.width;
+    const textHeight = 24;
+    const padding = 12;
+    
+    // خلفية داكنة شفافة للنص
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(titleX - textWidth / 2 - padding, titleY - textHeight / 2 - padding, textWidth + padding * 2, textHeight + padding * 2);
+    
+    // حد زهبي حول النص
+    ctx.strokeStyle = 'rgba(255,215,0,0.6)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(titleX - textWidth / 2 - padding, titleY - textHeight / 2 - padding, textWidth + padding * 2, textHeight + padding * 2);
+    
+    // النص الأبيض
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(titleText, titleX, titleY);
+    
+    // رسم محتوى القسم
+    drawSectionContent(sec);
+}
+
+function drawSectionContent(sec) {
+    const x = sec.x * TILE;
+    const y = sec.y * TILE;
+    
+    ctx.save();
+    
+    switch(sec.id) {
+        case 'intake':
+            // نهر النيل
+            ctx.fillStyle = 'rgba(30,100,150,0.6)';
+            ctx.fillRect(x + TILE * 2, y + TILE * 4, TILE * 12, TILE * 8);
+            
+            // تموجات النيل
+            ctx.strokeStyle = 'rgba(100,180,230,0.4)';
+            ctx.lineWidth = 2;
+            const waveTime = Date.now() / 600;
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                for (let j = 0; j < 12; j++) {
+                    const wx = x + TILE * 2 + j * TILE;
+                    const wy = y + TILE * 5 + i * TILE * 1.5 + Math.sin(waveTime + j * 0.5) * 5;
+                    if (j === 0) ctx.moveTo(wx, wy);
+                    else ctx.lineTo(wx, wy);
+                }
+                ctx.stroke();
+            }
+            
+            // نباتات الشاطئ
+            ctx.fillStyle = '#2d5016';
+            for (let i = 0; i < 6; i++) {
+                ctx.beginPath();
+                ctx.arc(x + TILE * 2.5 + i * TILE * 2, y + TILE * 4.2, 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // درابزين
+            ctx.strokeStyle = '#f39c12';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(x + TILE * 2 - 5, y + TILE * 4 - 5, TILE * 12 + 10, TILE * 8 + 10);
+            
+            // لوحة
+            ctx.fillStyle = 'rgba(0,100,0,0.8)';
+            ctx.fillRect(x + TILE * 5, y + TILE * 2.5, TILE * 6, TILE * 1.2);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('مأخذ مياه من نهر النيل', x + TILE * 8, y + TILE * 3.2);
+            
+            // عوامات
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.arc(x + TILE * 14, y + TILE * 6, 12, 0, Math.PI * 2);
+            ctx.arc(x + TILE * 14, y + TILE * 10, 12, 0, Math.PI * 2);
+            ctx.fill();
+            break;
+            
+        case 'pumps':
+            // طلمبات كبيرة
+            for (let i = 0; i < 3; i++) {
+                const px = x + TILE * 3 + i * TILE * 4;
+                const py = y + TILE * 5;
+                
+                ctx.fillStyle = '#5a6a7a';
+                ctx.fillRect(px, py, TILE * 2.5, TILE * 4);
+                
+                ctx.fillStyle = '#2c3e50';
+                ctx.beginPath();
+                ctx.arc(px + TILE * 1.25, py + TILE * 2, TILE * 0.8, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // دوران
+                const angle = Date.now() / 300 + i;
+                ctx.strokeStyle = '#e74c3c';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(px + TILE * 1.25, py + TILE * 2, TILE * 0.5, angle, angle + Math.PI);
+                ctx.stroke();
+            }
+            
+            // زر طوارئ
+            ctx.fillStyle = '#c0392b';
+            ctx.beginPath();
+            ctx.arc(x + TILE * 12, y + TILE * 12, 18, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 9px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('STOP', x + TILE * 12, y + TILE * 12 + 3);
+            break;
+            
+        case 'chlorine':
+            // أسطوانات
+            for (let i = 0; i < 5; i++) {
+                const cx = x + TILE * 2 + i * TILE * 2.3;
+                ctx.fillStyle = '#27ae60';
+                ctx.fillRect(cx, y + TILE * 4, TILE * 1.3, TILE * 6);
+                ctx.fillStyle = '#2ecc71';
+                ctx.beginPath();
+                ctx.ellipse(cx + TILE * 0.65, y + TILE * 4, TILE * 0.65, 8, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Cl₂', cx + TILE * 0.65, y + TILE * 7);
+            }
+            
+            // دش طوارئ
+            ctx.fillStyle = '#3498db';
+            ctx.fillRect(x + TILE * 12, y + TILE * 4, TILE * 1.2, TILE * 4);
+            ctx.fillStyle = '#fff';
+            ctx.font = '14px Arial';
+            ctx.fillText('🚿', x + TILE * 12.6, y + TILE * 6.5);
+            
+            // إنذار
+            const alarmOn = Math.sin(Date.now() / 400) > 0;
+            ctx.fillStyle = alarmOn ? '#e74c3c' : '#555';
+            ctx.beginPath();
+            ctx.arc(x + TILE * 12.6, y + TILE * 11, 12, 0, Math.PI * 2);
+            ctx.fill();
+            break;
+            
+        case 'alum':
+            // خزانات شبة
+            ctx.fillStyle = '#8e44ad';
+            ctx.fillRect(x + TILE * 3, y + TILE * 4, TILE * 4, TILE * 5);
+            ctx.fillRect(x + TILE * 8, y + TILE * 4, TILE * 4, TILE * 5);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('شبة', x + TILE * 5, y + TILE * 7);
+            ctx.fillText('شبة', x + TILE * 10, y + TILE * 7);
+            
+            // مغسلة عيون
+            ctx.fillStyle = '#3498db';
+            ctx.fillRect(x + TILE * 12, y + TILE * 10, TILE * 1.2, TILE * 1.2);
+            ctx.fillStyle = '#fff';
+            ctx.font = '16px Arial';
+            ctx.fillText('👁️', x + TILE * 12.6, y + TILE * 11);
+            break;
+            
+        case 'sedimentation':
+            // أحواض
+            for (let i = 0; i < 3; i++) {
+                const bx = x + TILE * 2 + i * TILE * 6.5;
+                ctx.fillStyle = 'rgba(52,152,219,0.45)';
+                ctx.fillRect(bx, y + TILE * 4, TILE * 5.5, TILE * 8);
+                ctx.strokeStyle = '#3498db';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(bx, y + TILE * 4, TILE * 5.5, TILE * 8);
+                
+                // تموجات
+                const wave = Math.sin(Date.now() / 700 + i) * 4;
+                ctx.strokeStyle = 'rgba(52,152,219,0.5)';
+                ctx.lineWidth = 1;
+                for (let j = 0; j < 4; j++) {
+                    ctx.beginPath();
+                    ctx.moveTo(bx + 8, y + TILE * 5 + j * TILE * 1.8 + wave);
+                    ctx.quadraticCurveTo(bx + TILE * 2.75, y + TILE * 5 + j * TILE * 1.8 - wave + 10, bx + TILE * 5.5 - 8, y + TILE * 5 + j * TILE * 1.8 + wave);
+                    ctx.stroke();
+                }
+            }
+            
+            // درابزين
+            ctx.strokeStyle = '#f39c12';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([12, 6]);
+            ctx.strokeRect(x + TILE * 1.5, y + TILE * 3.5, TILE * 19, TILE * 9);
+            ctx.setLineDash([]);
+            break;
+            
+        case 'filters':
+            // مرشحات
+            for (let i = 0; i < 4; i++) {
+                const fx = x + TILE * 2 + i * TILE * 3.5;
+                ctx.fillStyle = '#16a085';
+                ctx.fillRect(fx, y + TILE * 4, TILE * 2.8, TILE * 8);
+                ctx.strokeStyle = '#1abc9c';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(fx, y + TILE * 4, TILE * 2.8, TILE * 8);
+                
+                // خطوط
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                for (let j = 0; j < 6; j++) {
+                    ctx.beginPath();
+                    ctx.moveTo(fx + 6, y + TILE * 4.8 + j * TILE * 1.2);
+                    ctx.lineTo(fx + TILE * 2.8 - 6, y + TILE * 4.8 + j * TILE * 1.2);
+                    ctx.stroke();
+                }
+            }
+            break;
+            
+        case 'lab':
+            // طاولات
+            ctx.fillStyle = '#ecf0f1';
+            ctx.fillRect(x + TILE * 2, y + TILE * 4, TILE * 10, TILE * 2);
+            ctx.fillRect(x + TILE * 2, y + TILE * 9, TILE * 10, TILE * 2);
+            
+            // أدوات
+            const colors = ['#3498db', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c'];
+            for (let i = 0; i < 5; i++) {
+                ctx.fillStyle = colors[i];
+                ctx.fillRect(x + TILE * 3 + i * TILE * 1.8, y + TILE * 4.3, TILE * 0.5, TILE * 1.3);
+            }
+            
+            // شفاط
+            ctx.fillStyle = '#7f8c8d';
+            ctx.fillRect(x + TILE * 11.5, y + TILE * 5, TILE * 2, TILE * 6);
+            ctx.fillStyle = '#bdc3c7';
+            ctx.fillRect(x + TILE * 11.7, y + TILE * 5.2, TILE * 1.6, TILE * 5.6);
+            break;
+            
+        case 'electrical':
+            // لوحات كهرباء
+            for (let i = 0; i < 2; i++) {
+                const ex = x + TILE * 1.5 + i * TILE * 3.5;
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(ex, y + TILE * 4, TILE * 2.8, TILE * 7);
+                ctx.strokeStyle = '#e74c3c';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(ex, y + TILE * 4, TILE * 2.8, TILE * 7);
+                
+                // أضواء
+                for (let j = 0; j < 5; j++) {
+                    for (let k = 0; k < 2; k++) {
+                        ctx.fillStyle = ['#2ecc71', '#f39c12', '#e74c3c'][Math.floor(Math.random() * 3)];
+                        if (Math.random() > 0.3) {
+                            ctx.beginPath();
+                            ctx.arc(ex + TILE * 0.7 + k * TILE * 1.2, y + TILE * 4.8 + j * TILE * 1.2, 5, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                }
+            }
+            
+            // LOTO
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(x + TILE * 5.5, y + TILE * 12, TILE * 2, TILE);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 9px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('LOTO', x + TILE * 6.5, y + TILE * 12.6);
+            break;
+            
+        case 'generators':
+            // مولدات
+            for (let i = 0; i < 2; i++) {
+                const gx = x + TILE * 2 + i * TILE * 6;
+                ctx.fillStyle = '#5a6a7a';
+                ctx.fillRect(gx, y + TILE * 4, TILE * 4.5, TILE * 5);
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(gx + TILE * 0.5, y + TILE * 4.5, TILE * 3.5, TILE * 4);
+                
+                // عادم
+                ctx.fillStyle = '#34495e';
+                ctx.fillRect(gx + TILE * 4, y + TILE * 3, TILE * 0.8, TILE * 1.2);
+                
+                // دخان
+                if (Math.sin(Date.now() / 500 + i) > 0) {
+                    ctx.fillStyle = 'rgba(100,100,100,0.4)';
+                    ctx.beginPath();
+                    ctx.arc(gx + TILE * 4.4, y + TILE * 2.5, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            // خزان وقود
+            ctx.fillStyle = '#c0392b';
+            ctx.fillRect(x + TILE * 11, y + TILE * 5, TILE * 2, TILE * 4);
+            ctx.fillStyle = '#fff';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('⛽', x + TILE * 12, y + TILE * 7.5);
+            break;
+            
+        case 'workshop':
+            // طاولة عمل
+            ctx.fillStyle = '#8e6c3e';
+            ctx.fillRect(x + TILE * 2, y + TILE * 4, TILE * 12, TILE * 2.5);
+            
+            // أدوات
+            ctx.fillStyle = '#7f8c8d';
+            for (let i = 0; i < 5; i++) {
+                ctx.fillRect(x + TILE * 3 + i * TILE * 2, y + TILE * 4.3, TILE * 0.4, TILE * 1.8);
+            }
+            
+            // منطقة لحام
+            ctx.fillStyle = '#e67e22';
+            ctx.fillRect(x + TILE * 10, y + TILE * 8, TILE * 5, TILE * 3);
+            
+            // شرر
+            if (Math.random() > 0.7) {
+                ctx.fillStyle = '#f39c12';
+                for (let i = 0; i < 5; i++) {
+                    ctx.beginPath();
+                    ctx.arc(
+                        x + TILE * 12 + (Math.random() - 0.5) * TILE * 2,
+                        y + TILE * 9 + (Math.random() - 0.5) * TILE,
+                        2, 0, Math.PI * 2
+                    );
+                    ctx.fill();
+                }
+            }
+            
+            // طفاية
+            ctx.fillStyle = '#c0392b';
+            ctx.fillRect(x + TILE * 14.5, y + TILE * 10, TILE * 0.7, TILE * 2);
+            break;
+            
+        case 'tanks':
+            // خزانات
+            ctx.fillStyle = '#34495e';
+            ctx.fillRect(x + TILE * 3, y + TILE * 3, TILE * 6, TILE * 7);
+            ctx.fillRect(x + TILE * 11, y + TILE * 3, TILE * 6, TILE * 7);
+            
+            ctx.strokeStyle = '#7f8c8d';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x + TILE * 3, y + TILE * 3, TILE * 6, TILE * 7);
+            ctx.strokeRect(x + TILE * 11, y + TILE * 3, TILE * 6, TILE * 7);
+            
+            // فتحات
+            ctx.fillStyle = '#1a1a2e';
+            ctx.beginPath();
+            ctx.arc(x + TILE * 6, y + TILE * 4.5, 18, 0, Math.PI * 2);
+            ctx.arc(x + TILE * 14, y + TILE * 4.5, 18, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // تحذير
+            ctx.fillStyle = '#f39c12';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('⚠️ مكان مغلق - تصريح مطلوب', x + TILE * 9, y + TILE * 11);
+            break;
+    }
+    
+    ctx.restore();
+}
+
+function shadeColor(color, percent) {
+    const num = parseInt(color.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+    const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amt));
+    const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+    return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+}
+
+function drawPlayer() {
+    const px = player.x;
+    const py = player.y;
+    const s = player.w;
+    
+    ctx.save();
+    
+    // ظل
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.beginPath();
+    ctx.ellipse(px + s / 2, py + s + 4, s / 2, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // جسم
+    ctx.fillStyle = '#2980b9';
+    ctx.fillRect(px + 5, py + 12, s - 10, s - 12);
+    
+    // سترة
+    ctx.fillStyle = '#f39c12';
+    ctx.fillRect(px + 6, py + 14, s - 12, s - 16);
+    
+    // خطوط عاكسة
+    ctx.fillStyle = '#ecf0f1';
+    ctx.fillRect(px + 6, py + 20, s - 12, 3);
+    ctx.fillRect(px + 6, py + 26, s - 12, 3);
+    
+    // رأس
+    ctx.fillStyle = '#fad7a0';
+    ctx.beginPath();
+    ctx.arc(px + s / 2, py + 9, 9, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // خوذة
+    ctx.fillStyle = '#f1c40f';
+    ctx.beginPath();
+    ctx.arc(px + s / 2, py + 6, 11, Math.PI, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(px + s / 2 - 12, py + 5, 24, 4);
+    
+    // عيون
+    ctx.fillStyle = '#2c3e50';
+    let eyeX = px + s / 2;
+    let eyeY = py + 9;
+    if (player.dir === 'left') eyeX -= 3;
+    else if (player.dir === 'right') eyeX += 3;
+    else if (player.dir === 'up') eyeY -= 2;
+    else eyeY += 2;
+    ctx.beginPath();
+    ctx.arc(eyeX - 3, eyeY, 2.5, 0, Math.PI * 2);
+    ctx.arc(eyeX + 3, eyeY, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+}
+
+function drawMinimap() {
+    const mw = miniCanvas.width;
+    const mh = miniCanvas.height;
+    const sx = mw / MAP_W;
+    const sy = mh / MAP_H;
+    
+    miniCtx.fillStyle = '#1a2332';
+    miniCtx.fillRect(0, 0, mw, mh);
+    
+    sections.forEach(sec => {
+        miniCtx.fillStyle = sec.color;
+        miniCtx.fillRect(sec.x * TILE * sx, sec.y * TILE * sy, sec.w * TILE * sx, sec.h * TILE * sy);
+        miniCtx.strokeStyle = sec.borderColor;
+        miniCtx.lineWidth = 1;
+        miniCtx.strokeRect(sec.x * TILE * sx, sec.y * TILE * sy, sec.w * TILE * sx, sec.h * TILE * sy);
+    });
+    
+    hazards.forEach(h => {
+        miniCtx.fillStyle = h.discovered ? 'rgba(76,175,80,0.9)' : 'rgba(255,70,70,0.9)';
+        miniCtx.beginPath();
+        miniCtx.arc(h.x * TILE * sx + 2, h.y * TILE * sy + 2, 3, 0, Math.PI * 2);
+        miniCtx.fill();
+    });
+    
+    miniCtx.fillStyle = '#f1c40f';
+    miniCtx.fillRect(player.x * sx - 3, player.y * sy - 3, 7, 7);
+    
+    miniCtx.strokeStyle = 'rgba(255,255,255,0.5)';
+    miniCtx.lineWidth = 1;
+    miniCtx.strokeRect(camera.x * sx, camera.y * sy, camera.w * sx, camera.h * sy);
+}
+
+function updateCamera() {
+    camera.w = canvas.width;
+    camera.h = canvas.height;
+    camera.x = player.x + player.w / 2 - camera.w / 2;
+    camera.y = player.y + player.h / 2 - camera.h / 2;
+    camera.x = Math.max(0, Math.min(MAP_W - camera.w, camera.x));
+    camera.y = Math.max(0, Math.min(MAP_H - camera.h, camera.y));
+}
+
+let stepTimer = 0;
+
+function updatePlayer() {
+    // حساب السرعة من المفاتيح أو الجويستيك
+    let vx = 0, vy = 0;
+    
+    if (joystick.active) {
+        vx = joystick.dx * PLAYER_SPEED;
+        vy = joystick.dy * PLAYER_SPEED;
+    } else {
+        if (keys.up) vy = -PLAYER_SPEED;
+        if (keys.down) vy = PLAYER_SPEED;
+        if (keys.left) vx = -PLAYER_SPEED;
+        if (keys.right) vx = PLAYER_SPEED;
+    }
+    
+    // تحديد الاتجاه
+    if (Math.abs(vx) > Math.abs(vy)) {
+        player.dir = vx > 0 ? 'right' : 'left';
+    } else if (vy !== 0) {
+        player.dir = vy > 0 ? 'down' : 'up';
+    }
+    
+    // حركة قطرية
+    if (vx !== 0 && vy !== 0) {
+        vx *= 0.707;
+        vy *= 0.707;
+    }
+    
+    // تطبيق الحركة مع فحص التصادم
+    let newX = player.x + vx;
+    let newY = player.y + vy;
+    
+    // فحص أفقي
+    if (!collidesWithWall(newX, player.y, player.w, player.h)) {
+        player.x = newX;
+    }
+    
+    // فحص عمودي
+    if (!collidesWithWall(player.x, newY, player.w, player.h)) {
+        player.y = newY;
+    }
+    
+    // حدود الخريطة
+    player.x = Math.max(TILE, Math.min(MAP_W - TILE - player.w, player.x));
+    player.y = Math.max(TILE, Math.min(MAP_H - TILE - player.h, player.y));
+    
+    // صوت الخطوات
+    if (vx !== 0 || vy !== 0) {
+        stepTimer++;
+        if (stepTimer > 10) {
+            stepTimer = 0;
+            SpatialAudio.playStep();
+        }
+    }
+    
+    updateCurrentSection();
+    checkProximity();
+}
+
+function updateCurrentSection() {
+    const pcx = (player.x + player.w / 2) / TILE;
+    const pcy = (player.y + player.h / 2) / TILE;
+    let found = null;
+    
+    for (const sec of sections) {
+        if (pcx >= sec.x && pcx < sec.x + sec.w && pcy >= sec.y && pcy < sec.y + sec.h) {
+            found = sec;
+            break;
+        }
+    }
+    
+    if (found) {
+        document.getElementById('sectionIndicator').textContent = found.icon + ' ' + found.name;
+        if (gameState.currentSection !== found.id) {
+            gameState.currentSection = found.id;
+            currentSection = found;
+            SpatialAudio.playEnvironment(found.sound);
+            
+            // عرض نافذة اختيار المهمات عند دخول موقع جديد (أول مرة فقط)
+            if (!sectionPPEShown[found.id] && gameState.running && !gameState.paused) {
+                showPPESelectionModal(found);
+                sectionPPEShown[found.id] = true;
+            }
+        }
+    } else {
+        document.getElementById('sectionIndicator').textContent = '🚶 الممرات';
+        if (gameState.currentSection !== 'corridor') {
+            gameState.currentSection = 'corridor';
+            currentSection = null;
+            SpatialAudio.stopAll();
+            document.getElementById('soundName').textContent = 'الممرات';
+        }
+    }
+}
+
+let nearHazard = null;
+
+function checkProximity() {
+    const pcx = player.x + player.w / 2;
+    const pcy = player.y + player.h / 2;
+    const dist = TILE * 2.2;
+    
+    nearHazard = null;
+    
+    for (const h of hazards) {
+        if (h.discovered) continue;
+        const hx = h.x * TILE + TILE / 2;
+        const hy = h.y * TILE + TILE / 2;
+        const d = Math.hypot(pcx - hx, pcy - hy);
+        if (d < dist) {
+            nearHazard = h;
+            break;
+        }
+    }
+    
+    const hint = document.getElementById('interactHint');
+    if (nearHazard) hint.classList.remove('hidden');
+    else hint.classList.add('hidden');
+}
+
+function interact() {
+    if (gameState.paused || !nearHazard) return;
+    discoverHazard(nearHazard);
+}
+
+// ===== نظام التقييم =====
+let currentHazard = null;
+let selectedCorrective = null;
+let currentSection = null;
+let selectedPPE = [];
+let sectionPPEShown = {}; // تتبع الأقسام التي تم فتح نافذة المهمات فيها
+
+function buildMatrixGrid(containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    
+    // Header
+    container.innerHTML += '<div class="matrix-cell header"></div>';
+    severityLabels.forEach((label, i) => {
+        container.innerHTML += `<div class="matrix-cell header">${label}<br>${i + 1}</div>`;
+    });
+    
+    // Rows
+    for (let l = 4; l >= 0; l--) {
+        container.innerHTML += `<div class="matrix-cell row-header">${likelihoodLabels[l]} ${l + 1}</div>`;
+        for (let s = 0; s < 5; s++) {
+            const score = riskMatrix[l][s];
+            const riskClass = getRiskClass(score);
+            container.innerHTML += `<div class="matrix-cell ${riskClass}" data-likelihood="${l + 1}" data-severity="${s + 1}" data-score="${score}">${score}</div>`;
+        }
+    }
+    
+    // أحداث النقر
+    container.querySelectorAll('.matrix-cell:not(.header):not(.row-header)').forEach(cell => {
+        cell.addEventListener('click', () => {
+            container.querySelectorAll('.matrix-cell').forEach(c => c.classList.remove('selected'));
+            cell.classList.add('selected');
+            selectedMatrixCell = {
+                likelihood: parseInt(cell.dataset.likelihood),
+                severity: parseInt(cell.dataset.severity),
+                score: parseInt(cell.dataset.score)
+            };
+            
+            const result = document.getElementById('matrixResult');
+            const riskInfo = getRiskLevel(selectedMatrixCell.score);
+            result.className = 'matrix-result ' + riskInfo.color;
+            result.classList.remove('hidden');
+            document.getElementById('matrixResultText').textContent = 
+                `مستوى الخطورة: ${riskInfo.text} (${selectedMatrixCell.score})`;
+        });
+    });
+}
+
+function discoverHazard(hazard) {
+    currentHazard = hazard;
+    selectedCorrective = null;
+    gameState.paused = true;
+    
+    SpatialAudio.playDiscover();
+    
+    document.getElementById('hazardTitle').textContent = hazard.name;
+    document.getElementById('hazardDesc').textContent = hazard.desc;
+    document.getElementById('hazardIcon').textContent = hazard.icon;
+    
+    // بناء الإجراءات التصحيحية
+    const correctiveDiv = document.getElementById('correctiveOptions');
+    correctiveDiv.innerHTML = '';
+    
+    const correctAction = hazard.correctiveAction;
+    const allActions = Object.keys(correctiveActions);
+    const wrongActions = allActions.filter(a => a !== correctAction).sort(() => Math.random() - 0.5).slice(0, 3);
+    const options = [correctAction, ...wrongActions].sort(() => Math.random() - 0.5);
+    
+    options.forEach(actionId => {
+        const action = correctiveActions[actionId];
+        const btn = document.createElement('button');
+        btn.className = 'corrective-btn';
+        btn.dataset.action = actionId;
+        btn.textContent = action.icon + ' ' + action.text;
+        btn.onclick = () => {
+            document.querySelectorAll('.corrective-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedCorrective = actionId;
+        };
+        correctiveDiv.appendChild(btn);
+    });
+    
+    document.getElementById('hazardModal').classList.remove('hidden');
+}
+
+function submitAssessment() {
+    if (!currentHazard) return;
+    
+    if (!selectedCorrective) {
+        showToast('يرجى اختيار الإجراء التصحيحي', 'warning');
+        return;
+    }
+    
+    document.getElementById('hazardModal').classList.add('hidden');
+    
+    let score = 0;
+    let feedback = [];
+    let isSuccess = true;
+    
+    // تقييم الإجراء التصحيحي
+    if (selectedCorrective === currentHazard.correctiveAction) {
+        score += 100;
+        feedback.push('✅ الإجراء التصحيحي: صحيح! (+100)');
+        isSuccess = true;
+    } else {
+        const correctText = correctiveActions[currentHazard.correctiveAction].text;
+        const selectedText = correctiveActions[selectedCorrective].text;
+        feedback.push(`❌ خطأ! الإجراء الصحيح: ${correctText}`);
+        feedback.push(`   اخترت: ${selectedText}`);
+        isSuccess = false;
+        score = 0;
+    }
+    
+    // تحديث الحالة
+    currentHazard.discovered = true;
+    gameState.discoveredHazards.push(currentHazard.id);
+    gameState.score += score;
+    gameState.totalAttempts++;
+    if (isSuccess) gameState.totalCorrect++;
+    
+    updateProgress();
+    showResult(score, feedback, isSuccess, currentHazard);
+}
+
+function showResult(score, feedback, isSuccess, hazard) {
+    const header = document.getElementById('resultHeader');
+    const icon = document.getElementById('resultIcon');
+    const title = document.getElementById('resultTitle');
+    const feedbackDiv = document.getElementById('resultFeedback');
+    const eduContent = document.getElementById('eduContent');
+    
+    if (isSuccess) {
+        header.className = 'modal-header success';
+        icon.textContent = '✅';
+        title.textContent = 'إجابة صحيحة!';
+        feedbackDiv.className = 'result-feedback success';
+        SpatialAudio.playSuccess();
+    } else {
+        header.className = 'modal-header danger';
+        icon.textContent = '❌';
+        title.textContent = 'إجابة خاطئة';
+        feedbackDiv.className = 'result-feedback fail';
+        SpatialAudio.playError();
+    }
+    
+    feedbackDiv.innerHTML = feedback.join('<br>') + `<span class="result-score">+${score} نقطة</span>`;
+    
+    // محتوى تعليمي
+    const section = sections.find(s => s.id === hazard.section);
+    const correctActionText = correctiveActions[hazard.correctiveAction].text;
+    
+    eduContent.innerHTML = `
+        <p><strong>📍 القسم:</strong> ${section?.name || ''}</p>
+        <p><strong>⚠️ الخطر:</strong> ${hazard.name}</p>
+        <p><strong>🔧 الإجراء الصحيح:</strong> ${correctActionText}</p>
+    `;
+    
+    document.getElementById('resultModal').classList.remove('hidden');
+}
+
+function updateProgress() {
+    const total = hazards.length;
+    const discovered = gameState.discoveredHazards.length;
+    gameState.progress = Math.round((discovered / total) * 100);
+}
+
+function showPPESelectionModal(section) {
+    if (!section || !section.requiredPPE) return;
+    
+    gameState.paused = true;
+    selectedPPE = [];
+    
+    // عرض اسم الموقع
+    document.getElementById('sectionNamePPE').textContent = section.icon + ' ' + section.name;
+    
+    // بناء شبكة اختيار المهمات
+    const ppeGrid = document.getElementById('ppeSelectGrid');
+    ppeGrid.innerHTML = '';
+    
+    allPPE.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'ppe-item';
+        div.dataset.id = item.id;
+
+        div.innerHTML = `<span class="ppe-icon">${item.icon}</span><span>${item.name}</span>`;
+        div.onclick = () => {
+            div.classList.toggle('selected');
+            if (selectedPPE.includes(item.id)) {
+                selectedPPE = selectedPPE.filter(p => p !== item.id);
+            } else {
+                selectedPPE.push(item.id);
+            }
+        };
+        ppeGrid.appendChild(div);
+    });
+    
+    document.getElementById('ppeModal').classList.remove('hidden');
+}
+
+function confirmPPESelection() {
+    const section = currentSection;
+    if (!section) {
+        gameState.paused = false;
+        document.getElementById('ppeModal').classList.add('hidden');
+        return;
+    }
+    
+    // حساب النقاط بناءً على المهمات المختارة
+    const requiredPPE = section.requiredPPE || [];
+    const correctPPE = requiredPPE.filter(p => selectedPPE.includes(p));
+    const extraPPE = selectedPPE.filter(p => !requiredPPE.includes(p));
+    
+    let feedback = [];
+    let ppeScore = 0;
+    let ppeSuccess = correctPPE.length === requiredPPE.length && extraPPE.length === 0;
+    
+    if (correctPPE.length === requiredPPE.length) {
+        const correctNames = correctPPE.map(id => allPPE.find(p => p.id === id)?.name).join('، ');
+        feedback.push(`✅ اخترت المهمات الصحيحة: ${correctNames}`);
+        ppeScore = 50;
+    } else {
+        const missedPPE = requiredPPE.filter(p => !selectedPPE.includes(p));
+        const missedNames = missedPPE.map(id => allPPE.find(p => p.id === id)?.name).join('، ');
+        feedback.push(`⚠️ مهمات ناقصة: ${missedNames}`);
+        ppeScore = 25;
+        ppeSuccess = false;
+    }
+    
+    if (extraPPE.length > 0) {
+        const extraNames = extraPPE.map(id => allPPE.find(p => p.id === id)?.name).join('، ');
+        feedback.push(`⚠️ اخترت مهمات إضافية: ${extraNames}`);
+        ppeSuccess = false;
+    }
+    
+    // تحديث النقاط
+    gameState.score += ppeScore;
+    if (ppeSuccess) gameState.totalCorrect++;
+    gameState.totalAttempts++;
+    
+    // عرض النتيجة
+    showPPEResult(ppeScore, feedback, ppeSuccess, section);
+    
+    document.getElementById('ppeModal').classList.add('hidden');
+}
+
+function showPPEResult(score, feedback, isSuccess, section) {
+    const header = document.getElementById('resultHeader');
+    const icon = document.getElementById('resultIcon');
+    const title = document.getElementById('resultTitle');
+    const feedbackDiv = document.getElementById('resultFeedback');
+    const eduContent = document.getElementById('eduContent');
+    
+    if (isSuccess) {
+        header.className = 'modal-header success';
+        icon.textContent = '✅';
+        title.textContent = 'اختيار صحيح!';
+        feedbackDiv.className = 'result-feedback success';
+        SpatialAudio.playSuccess();
+    } else {
+        header.className = 'modal-header warning';
+        icon.textContent = '⚠️';
+        title.textContent = 'اختيار ناقص';
+        feedbackDiv.className = 'result-feedback partial';
+    }
+    
+    feedbackDiv.innerHTML = feedback.join('<br>') + `<span class="result-score">+${score} نقطة</span>`;
+    
+    // محتوى تعليمي
+    const correctPPENames = (section.requiredPPE || []).map(id => allPPE.find(p => p.id === id)?.name).join('، ');
+    
+    eduContent.innerHTML = `
+        <p><strong>📍 الموقع:</strong> ${section.name}</p>
+        <p><strong>🦺 المهمات المطلوبة:</strong> ${correctPPENames}</p>
+    `;
+    
+    document.getElementById('resultModal').classList.remove('hidden');
+}
+
+function updateUI() {
+    document.getElementById('healthBar').style.width = gameState.health + '%';
+    document.getElementById('healthVal').textContent = gameState.health + '%';
+    document.getElementById('timeVal').textContent = formatTime(gameState.time);
+    document.getElementById('scoreVal').textContent = gameState.score;
+    document.getElementById('safetyBar').style.width = gameState.progress + '%';
+    document.getElementById('safetyVal').textContent = gameState.progress + '%';
+}
+
+function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+let timerInterval;
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        if (!gameState.running || gameState.paused) return;
+        gameState.time--;
+        if (gameState.time <= 0) {
+            gameState.time = 0;
+            endGame();
+        }
+        if (gameState.time <= 60) {
+            document.getElementById('timeVal').style.color = '#f44336';
+        }
+    }, 1000);
+}
+
+function endGame() {
+    gameState.running = false;
+    if (timerInterval) clearInterval(timerInterval);
+    SpatialAudio.stopAll();
+    
+    const totalHazards = hazards.length;
+    const discovered = gameState.discoveredHazards.length;
+    const accuracy = gameState.totalAttempts > 0 ? Math.round((gameState.totalCorrect / gameState.totalAttempts) * 100) : 0;
+    
+    document.getElementById('finalScore').textContent = gameState.score;
+    document.getElementById('finalHazards').textContent = discovered + '/' + totalHazards;
+    document.getElementById('finalAccuracy').textContent = accuracy + '%';
+    document.getElementById('finalTime').textContent = formatTime(GAME_TIME - gameState.time);
+    
+    const badge = document.getElementById('gradeBadge');
+    if (accuracy >= 80 && discovered >= totalHazards * 0.8) {
+        badge.className = 'grade-badge excellent';
+        badge.textContent = '🏆 ممتاز';
+    } else if (accuracy >= 60) {
+        badge.className = 'grade-badge good';
+        badge.textContent = '👍 جيد';
+    } else if (accuracy >= 40) {
+        badge.className = 'grade-badge average';
+        badge.textContent = '📝 مقبول';
+    } else {
+        badge.className = 'grade-badge needs-work';
+        badge.textContent = '📚 يحتاج تدريب';
+    }
+    
+    document.getElementById('gameScreen').classList.remove('active');
+    document.getElementById('winScreen').classList.add('active');
+    
+    localStorage.removeItem('safetyInspector_save');
+    SpatialAudio.playSuccess();
+}
+
+function showToast(msg, type = 'info') {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s';
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+
+function gameLoop() {
+    if (!gameState.running) return;
+    
+    if (!gameState.paused) {
+        updatePlayer();
+    }
+    
+    updateCamera();
+    
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(-camera.x, -camera.y);
+    drawMap();
+    drawPlayer();
+    ctx.restore();
+    
+    updateUI();
+    drawMinimap();
+    
+    requestAnimationFrame(gameLoop);
+}
+
+// ===== Joystick للموبايل =====
+function initJoystick() {
+    const container = document.getElementById('joystickContainer');
+    const knob = document.getElementById('joystickKnob');
+    const maxDist = 45;
+    
+    let centerX, centerY;
+    
+    function updateCenter() {
+        const rect = container.getBoundingClientRect();
+        centerX = rect.left + rect.width / 2;
+        centerY = rect.top + rect.height / 2;
+    }
+    
+    function handleMove(clientX, clientY) {
+        updateCenter();
+        let dx = clientX - centerX;
+        let dy = clientY - centerY;
+        const dist = Math.hypot(dx, dy);
+        
+        if (dist > maxDist) {
+            dx = (dx / dist) * maxDist;
+            dy = (dy / dist) * maxDist;
+        }
+        
+        knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+        
+        joystick.dx = dx / maxDist;
+        joystick.dy = dy / maxDist;
+    }
+    
+    function handleEnd() {
+        knob.style.transform = 'translate(-50%, -50%)';
+        joystick.active = false;
+        joystick.dx = 0;
+        joystick.dy = 0;
+    }
+    
+    container.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        joystick.active = true;
+        updateCenter();
+        const touch = e.touches[0];
+        handleMove(touch.clientX, touch.clientY);
+    }, { passive: false });
+    
+    container.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (!joystick.active) return;
+        const touch = e.touches[0];
+        handleMove(touch.clientX, touch.clientY);
+    }, { passive: false });
+    
+    container.addEventListener('touchend', handleEnd);
+    container.addEventListener('touchcancel', handleEnd);
+    
+    // Mouse support
+    container.addEventListener('mousedown', (e) => {
+        joystick.active = true;
+        updateCenter();
+        handleMove(e.clientX, e.clientY);
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (!joystick.active) return;
+        handleMove(e.clientX, e.clientY);
+    });
+    
+    document.addEventListener('mouseup', handleEnd);
+}
+
+function initEvents() {
+    // لوحة المفاتيح
+    document.addEventListener('keydown', (e) => {
+        switch(e.code) {
+            case 'ArrowUp':
+            case 'KeyW':
+                keys.up = true;
+                break;
+            case 'ArrowDown':
+            case 'KeyS':
+                keys.down = true;
+                break;
+            case 'ArrowLeft':
+            case 'KeyA':
+                keys.left = true;
+                break;
+            case 'ArrowRight':
+            case 'KeyD':
+                keys.right = true;
+                break;
+            case 'Space':
+            case 'KeyE':
+                interact();
+                break;
+            case 'Escape':
+                togglePause();
+                break;
+        }
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) {
+            e.preventDefault();
+        }
+    });
+    
+    document.addEventListener('keyup', (e) => {
+        switch(e.code) {
+            case 'ArrowUp':
+            case 'KeyW':
+                keys.up = false;
+                break;
+            case 'ArrowDown':
+            case 'KeyS':
+                keys.down = false;
+                break;
+            case 'ArrowLeft':
+            case 'KeyA':
+                keys.left = false;
+                break;
+            case 'ArrowRight':
+            case 'KeyD':
+                keys.right = false;
+                break;
+        }
+    });
+    
+    // زر التفاعل للموبايل
+    document.getElementById('btnInteract').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        interact();
+    }, { passive: false });
+    document.getElementById('btnInteract').addEventListener('click', interact);
+    
+    // أزرار الواجهة
+    document.getElementById('btnStart').addEventListener('click', startGame);
+    document.getElementById('btnContinue').addEventListener('click', continueGame);
+    document.getElementById('btnMenu').addEventListener('click', togglePause);
+    document.getElementById('btnResume').addEventListener('click', togglePause);
+    document.getElementById('btnSave').addEventListener('click', saveGame);
+    document.getElementById('btnQuit').addEventListener('click', () => { saveGame(); location.reload(); });
+    document.getElementById('btnRestart').addEventListener('click', () => location.reload());
+    
+    // مصفوفة المخاطر
+    document.getElementById('btnMatrix').addEventListener('click', () => {
+        document.getElementById('matrixModal').classList.remove('hidden');
+        gameState.paused = true;
+    });
+    document.getElementById('btnCloseMatrixView').addEventListener('click', () => {
+        document.getElementById('matrixModal').classList.add('hidden');
+        gameState.paused = false;
+    });
+    
+    // حول التطبيق
+    document.getElementById('btnAbout').addEventListener('click', () => {
+        document.getElementById('aboutModal').classList.remove('hidden');
+    });
+    document.getElementById('btnCloseAbout').addEventListener('click', () => {
+        document.getElementById('aboutModal').classList.add('hidden');
+    });
+    
+    // نوافذ التقييم
+    document.getElementById('btnSubmitAssessment').addEventListener('click', submitAssessment);
+    document.getElementById('btnConfirmPPE').addEventListener('click', confirmPPESelection);
+    document.getElementById('btnCloseResult').addEventListener('click', () => {
+        document.getElementById('resultModal').classList.add('hidden');
+        gameState.paused = false;
+        currentHazard = null;
+        
+        if (hazards.every(h => h.discovered)) {
+            setTimeout(endGame, 1000);
+        }
+    });
+    
+    // تغيير الحجم
+    window.addEventListener('resize', resizeCanvas);
+    
+    // اكتشاف الموبايل
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+        document.getElementById('mobileControls').style.display = 'flex';
+        initJoystick();
+    }
+}
+
+function resizeCanvas() {
+    const topBarH = document.getElementById('topBar').offsetHeight;
+    canvas.style.top = topBarH + 'px';
+    canvas.style.height = 'calc(100% - ' + topBarH + 'px)';
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+    
+    if (window.innerWidth <= 768) {
+        miniCanvas.width = 120;
+        miniCanvas.height = 90;
+    } else {
+        miniCanvas.width = 180;
+        miniCanvas.height = 140;
+    }
+}
+
+function togglePause() {
+    if (!gameState.running) return;
+    gameState.paused = !gameState.paused;
+    const menu = document.getElementById('pauseMenu');
+    
+    if (gameState.paused) {
+        document.getElementById('pauseScore').textContent = gameState.score;
+        document.getElementById('pauseHazards').textContent = gameState.discoveredHazards.length + '/' + hazards.length;
+        document.getElementById('pauseProgress').textContent = gameState.progress + '%';
+        menu.classList.remove('hidden');
+    } else {
+        menu.classList.add('hidden');
+    }
+}
+
+function saveGame() {
+    const save = {
+        score: gameState.score,
+        health: gameState.health,
+        time: gameState.time,
+        progress: gameState.progress,
+        discoveredHazards: gameState.discoveredHazards,
+        totalCorrect: gameState.totalCorrect,
+        totalAttempts: gameState.totalAttempts,
+        playerX: player.x,
+        playerY: player.y
+    };
+    localStorage.setItem('safetyInspector_save', JSON.stringify(save));
+    showToast('تم حفظ التقدم بنجاح 💾', 'success');
+}
+
+function loadGame() {
+    const data = localStorage.getItem('safetyInspector_save');
+    if (!data) return false;
+    try {
+        const save = JSON.parse(data);
+        gameState.score = save.score || 0;
+        gameState.health = save.health || 100;
+        gameState.time = save.time || GAME_TIME;
+        gameState.progress = save.progress || 0;
+        gameState.discoveredHazards = save.discoveredHazards || [];
+        gameState.totalCorrect = save.totalCorrect || 0;
+        gameState.totalAttempts = save.totalAttempts || 0;
+        player.x = save.playerX || 280;
+        player.y = save.playerY || 280;
+        hazards.forEach(h => { h.discovered = gameState.discoveredHazards.includes(h.id); });
+        return true;
+    } catch (e) { return false; }
+}
+
+function startGame() {
+    SpatialAudio.init();
+    buildWalls();
+    gameState.running = true;
+    sectionPPEShown = {}; // إعادة تهيئة
+    
+    document.getElementById('startScreen').classList.remove('active');
+    document.getElementById('gameScreen').classList.add('active');
+    
+    resizeCanvas();
+    startTimer();
+    gameLoop();
+    
+    // تشغيل صوت المأخذ
+    setTimeout(() => {
+        SpatialAudio.playEnvironment('water');
+    }, 500);
+}
+
+function continueGame() {
+    SpatialAudio.init();
+    buildWalls();
+    loadGame();
+    gameState.running = true;
+    
+    document.getElementById('startScreen').classList.remove('active');
+    document.getElementById('gameScreen').classList.add('active');
+    
+    resizeCanvas();
+    startTimer();
+    gameLoop();
+}
+
+// ===== PWA - تسجيل Service Worker وزر التثبيت =====
+let deferredPrompt;
+let installButton;
+
+// تسجيل Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then((registration) => {
+                console.log('✅ Service Worker مسجل بنجاح:', registration.scope);
+            })
+            .catch((error) => {
+                console.log('❌ فشل تسجيل Service Worker:', error);
+            });
+    });
+}
+
+// التقاط حدث التثبيت
+window.addEventListener('beforeinstallprompt', (e) => {
+    console.log('📱 يمكن تثبيت التطبيق');
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // إظهار زر التثبيت
+    if (installButton) {
+        installButton.style.display = 'inline-block';
+    }
+    showInstallButton();
+});
+
+// التحقق إذا تم التثبيت
+window.addEventListener('appinstalled', () => {
+    console.log('✅ تم تثبيت التطبيق');
+    deferredPrompt = null;
+    if (installButton) {
+        installButton.style.display = 'none';
+    }
+    showToast('تم تثبيت التطبيق بنجاح! 🎉', 'success');
+});
+
+function showInstallButton() {
+    // إنشاء زر التثبيت إذا لم يكن موجوداً
+    if (!document.getElementById('btnInstall')) {
+        const startContent = document.querySelector('.start-content');
+        if (startContent) {
+            installButton = document.createElement('button');
+            installButton.id = 'btnInstall';
+            installButton.className = 'btn-install';
+            installButton.innerHTML = '📲 تثبيت التطبيق';
+            installButton.onclick = installApp;
+            
+            // إضافة الزر بعد زر "حول التطبيق"
+            const aboutBtn = document.getElementById('btnAbout');
+            if (aboutBtn) {
+                aboutBtn.parentNode.insertBefore(installButton, aboutBtn.nextSibling);
+            } else {
+                startContent.appendChild(installButton);
+            }
+        }
+    }
+}
+
+async function installApp() {
+    if (!deferredPrompt) {
+        showToast('التطبيق مثبت بالفعل أو غير مدعوم', 'info');
+        return;
+    }
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+        console.log('✅ المستخدم وافق على التثبيت');
+    } else {
+        console.log('❌ المستخدم رفض التثبيت');
+    }
+    
+    deferredPrompt = null;
+    if (installButton) {
+        installButton.style.display = 'none';
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    initEvents();
+    const saved = localStorage.getItem('safetyInspector_save');
+    if (saved) document.getElementById('btnContinue').style.display = 'inline-block';
+    
+    // التحقق إذا التطبيق يعمل كـ PWA
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        console.log('📱 التطبيق يعمل في وضع standalone');
+    }
+});
+</script>
+</body>
+</html>
